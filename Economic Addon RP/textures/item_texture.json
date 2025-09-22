@@ -1,5 +1,30 @@
 {
-	"resource_pack_name": "Economic Addon",
-	"texture_name": "atlas.items",
-	"texture_data": {}
+  "resource_pack_name": "Economic Addon",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "economic_coin_1": {
+      "textures": "textures/items/money1"
+    },
+    "economic_coin_5": {
+      "textures": "textures/items/money2"
+    },
+    "economic_coin_10": {
+      "textures": "textures/items/money3"
+    },
+    "economic_note_20": {
+      "textures": "textures/items/money4"
+    },
+    "economic_note_50": {
+      "textures": "textures/items/money5"
+    },
+    "economic_note_100": {
+      "textures": "textures/items/money6"
+    },
+    "economic_note_500": {
+      "textures": "textures/items/money7"
+    },
+    "economic_note_1000": {
+      "textures": "textures/items/money8"
+    }
+  }
 }

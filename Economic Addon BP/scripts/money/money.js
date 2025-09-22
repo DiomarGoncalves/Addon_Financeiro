@@ -11,19 +11,19 @@ export class MoneySystem {
         world.sendMessage("§a[Money System] Sistema de dinheiro físico ativo!");
     }
 
-    initializeMoneyItems() {
+     initializeMoneyItems() {
         return {
             // Moedas
-            coin_1: { value: 1, name: "Moeda de 1$", item: "minecraft:gold_nugget", color: "§e" },
-            coin_5: { value: 5, name: "Moeda de 5$", item: "minecraft:iron_nugget", color: "§8" },
-            coin_10: { value: 10, name: "Moeda de 10$", item: "minecraft:copper_ingot", color: "§6" },
+            coin_1: { value: 1, name: "Moeda de 1$", item: "economic:coin_1", color: "§e" },
+            coin_5: { value: 5, name: "Moeda de 5$", item: "economic:coin_2", color: "§7" },
+            coin_10: { value: 10, name: "Moeda de 10$", item: "economic:coin_3", color: "§6" },
             
             // Notas
-            note_20: { value: 20, name: "Nota de 20$", item: "minecraft:paper", color: "§a" },
-            note_50: { value: 50, name: "Nota de 50$", item: "minecraft:book", color: "§b" },
-            note_100: { value: 100, name: "Nota de 100$", item: "minecraft:enchanted_book", color: "§d" },
-            note_500: { value: 500, name: "Nota de 500$", item: "minecraft:name_tag", color: "§c" },
-            note_1000: { value: 1000, name: "Nota de 1000$", item: "minecraft:nether_star", color: "§f" }
+            note_20: { value: 20, name: "Nota de 20$", item: "economic:note_4", color: "§a" },
+            note_50: { value: 50, name: "Nota de 50$", item: "economic:note_5", color: "§b" },
+            note_100: { value: 100, name: "Nota de 100$", item: "economic:note_6", color: "§d" },
+            note_500: { value: 500, name: "Nota de 500$", item: "economic:note_7", color: "§c" },
+            note_1000: { value: 1000, name: "Nota de 1000$", item: "economic:note_8", color: "§f" }
         };
     }
 
