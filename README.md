@@ -6,7 +6,7 @@ Vá em "Pacotes de Comportamento" e ative o "Economic Addon BP".
 Coloque NPCs para cada sistema
 
 Use o comando /summon npc para criar um NPC.
-Edite o NPC e adicione a tag correspondente usando /tag @e[type=npc,sort=nearest,limit=1] add <tag> ou via bloco de comando.
+Edite o NPC e adicione a tag correspondente usando /tag @e[r=2] add <tag> ou via bloco de comando.
 Tags disponíveis:
 
 banknpc → abre o menu do banco (depósito, saque, transferências)
