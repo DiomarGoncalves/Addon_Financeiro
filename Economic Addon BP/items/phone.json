@@ -11,7 +11,7 @@
       "minecraft:icon": "economic_phone",
       "minecraft:max_stack_size": 1,
       "minecraft:display_name": {
-        "value": "Celular Econômico"
+        "value": "Celular bank"
       },
       "minecraft:use_modifiers": {
         "use_duration": 0,
