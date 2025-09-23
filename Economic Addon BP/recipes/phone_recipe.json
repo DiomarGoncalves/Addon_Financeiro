@@ -1,0 +1,29 @@
+{
+  "format_version": "1.19.0",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "economic:phone_recipe"
+    },
+    "tags": ["crafting_table"],
+    "pattern": [
+      "GGG",
+      "GRG",
+      "GIG"
+    ],
+    "key": {
+      "G": {
+        "item": "minecraft:glass"
+      },
+      "R": {
+        "item": "minecraft:redstone"
+      },
+      "I": {
+        "item": "minecraft:iron_ingot"
+      }
+    },
+    "result": {
+      "item": "economic:phone",
+      "count": 1
+    }
+  }
+}

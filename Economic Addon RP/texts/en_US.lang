@@ -1,8 +1,2 @@
-item.economic:coin_1=§e💰 $1 Coin
-item.economic:coin_5=§7💰 $5 Coin  
-item.economic:coin_10=§6💰 $10 Coin
-item.economic:note_20=§a💵 $20 Bill
-item.economic:note_50=§b💵 $50 Bill
-item.economic:note_100=§d💵 $100 Bill
-item.economic:note_500=§c💵 $500 Bill
-item.economic:note_1000=§f💵 $1000 Bill
+item.spawn_egg.entity.Economic:dsa.name=Spawn dsa
+entity.Economic:dsa.name=dsa

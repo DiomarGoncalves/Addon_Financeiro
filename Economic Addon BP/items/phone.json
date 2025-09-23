@@ -2,20 +2,16 @@
   "format_version": "1.21.0",
   "minecraft:item": {
     "description": {
-      "identifier": "economic:coin_5",
+      "identifier": "economic:phone",
       "menu_category": {
         "category": "items"
       }
     },
     "components": {
-      "minecraft:icon": {
-        "textures": {
-          "default": "economic_coin_5"
-        }
-      },
-      "minecraft:max_stack_size": 64,
+      "minecraft:icon": "economic_phone",
+      "minecraft:max_stack_size": 1,
       "minecraft:display_name": {
-        "value": "§7 Moeda de 5$"
+        "value": "Celular Econômico"
       },
       "minecraft:use_modifiers": {
         "use_duration": 0,

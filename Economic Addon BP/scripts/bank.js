@@ -26,7 +26,7 @@ export class BankSystem {
 
         const form = new ActionFormData()
             .title("§8🏦 BANCO")
-            .body(`§8Seu banco:\n\n§8💵 Carteira: ${this.core.formatMoney(balance)}\n§8🏦 Banco: ${this.core.formatMoney(bankBalance)}\n\n§8Escolha uma opção:`)
+            .body(`§8Seu banco:\n\n§8 Carteira: ${this.core.formatMoney(balance)}\n§8🏦 Banco: ${this.core.formatMoney(bankBalance)}\n\n§8Escolha uma opção:`)
             .button("§8Depositar dinheiro")
             .button("§8Sacar dinheiro")
             .button("§8Transferir para outro jogador")

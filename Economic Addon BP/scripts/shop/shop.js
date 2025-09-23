@@ -16,6 +16,15 @@ export class ShopSystem {
         world.sendMessage("§a[Shop System] Sistema de lojas ativo!");
     }
 
+    // Método para resetar todos os dados internos
+    clearData() {
+        this.shops.clear();
+        this.shopCategories.clear();
+        this.playerPurchases.clear();
+    }
+
+
+
     setupEvents() {
         // Interação com NPC de loja
         if (world.beforeEvents?.playerInteractWithEntity) {
@@ -29,18 +38,36 @@ export class ShopSystem {
                 system.run(() => this.openShopInterface(player, entity));
             });
         }
-        // Removido: comandos de chat e admin
+
+        // Comandos de loja
+        if (world.beforeEvents?.chatSend) {
+            world.beforeEvents.chatSend.subscribe((event) => {
+                const message = event.message.toLowerCase();
+                const player = event.sender;
+                
+                if (message === "!purchases" || message === "!compras") {
+                    event.cancel = true;
+                    this.showPurchaseHistory(player);
+                }
+                
+                // Comandos de admin
+                if (message.startsWith("!shop-create ") && player.hasTag("admin")) {
+                    event.cancel = true;
+                    this.handleCreateShopCommand(player, message);
+                }
+            });
+        }
     }
 
     initializeDefaultShops() {
         // Loja Geral
         this.createShop("general_store", {
-            name: "🏪 Loja Geral",
+            name: " Loja Geral",
             description: "Tudo que você precisa para sobreviver!",
             categories: [
                 {
                     name: "Ferramentas Básicas",
-                    icon: "",
+                    textura: "textures/items/netherite_pickaxe",
                     items: [
                         { id: "minecraft:wooden_pickaxe", count: 1, price: 50, stock: -1 },
                         { id: "minecraft:stone_pickaxe", count: 1, price: 150, stock: -1 },
@@ -52,7 +79,7 @@ export class ShopSystem {
                 },
                 {
                     name: "Blocos de Construção",
-                    icon: "",
+                    textura: "textures/blocks/stone",
                     items: [
                         { id: "minecraft:cobblestone", count: 64, price: 100, stock: -1 },
                         { id: "minecraft:stone", count: 64, price: 150, stock: -1 },
@@ -63,7 +90,7 @@ export class ShopSystem {
                 },
                 {
                     name: "Comida e Consumíveis",
-                    icon: "",
+                    textura:"textures/items/apple",
                     items: [
                         { id: "minecraft:bread", count: 16, price: 200, stock: -1 },
                         { id: "minecraft:cooked_beef", count: 8, price: 300, stock: -1 },
@@ -82,7 +109,7 @@ export class ShopSystem {
             categories: [
                 {
                     name: "Armaduras de Couro",
-                    icon: "",
+                    textura: "",
                     items: [
                         { id: "minecraft:leather_helmet", count: 1, price: 100, stock: -1 },
                         { id: "minecraft:leather_chestplate", count: 1, price: 200, stock: -1 },
@@ -92,7 +119,7 @@ export class ShopSystem {
                 },
                 {
                     name: "Armaduras de Ferro",
-                    icon: "",
+                    textura: "",
                     items: [
                         { id: "minecraft:iron_helmet", count: 1, price: 800, stock: -1 },
                         { id: "minecraft:iron_chestplate", count: 1, price: 1200, stock: -1 },
@@ -102,7 +129,7 @@ export class ShopSystem {
                 },
                 {
                     name: "Armas Especiais",
-                    icon: "",
+                    textura: "",
                     items: [
                         { id: "minecraft:bow", count: 1, price: 300, stock: -1 },
                         { id: "minecraft:crossbow", count: 1, price: 500, stock: -1 },
@@ -120,7 +147,7 @@ export class ShopSystem {
             categories: [
                 {
                     name: "Minerais Preciosos",
-                    icon: "",
+                    textura: "",
                     items: [
                         { id: "minecraft:diamond", count: 1, price: 2000, stock: 10 },
                         { id: "minecraft:emerald", count: 1, price: 1500, stock: 15 },
@@ -131,7 +158,7 @@ export class ShopSystem {
                 },
                 {
                     name: "Itens do Nether",
-                    icon: "",
+                    textura: "",
                     items: [
                         { id: "minecraft:blaze_rod", count: 1, price: 800, stock: 20 },
                         { id: "minecraft:ghast_tear", count: 1, price: 1200, stock: 10 },
@@ -141,7 +168,7 @@ export class ShopSystem {
                 },
                 {
                     name: "Itens do End",
-                    icon: "",
+                    textura: "",
                     items: [
                         { id: "minecraft:ender_pearl", count: 1, price: 1000, stock: 15 },
                         { id: "minecraft:end_stone", count: 32, price: 800, stock: -1 },
@@ -176,15 +203,15 @@ export class ShopSystem {
         
         const form = new ActionFormData()
             .title(`${shop.name}`)
-            .body(`§f${shop.description}\n\n§8 Seu dinheiro: ${this.core.formatMoney(balance)}\n\n§fCategorias disponíveis:`);
+            .body(`§f${shop.description}\n\n§7 Seu dinheiro: ${this.core.formatMoney(balance)}\n\n§fCategorias disponíveis:`);
 
         shop.categories.forEach(category => {
             const availableItems = category.items.filter(item => item.stock !== 0).length;
-            form.button(`§8${category.icon} ${category.name}\n§8${availableItems} itens disponíveis`);
+            form.button(`§f${category.name}\n§8${availableItems} itens disponíveis`, category.textura || "textures/ui/icon_import");
         });
 
-        form.button("§8 HISTÓRICO DE COMPRAS\n§8Ver suas compras anteriores");
-        form.button("§8 OFERTAS ESPECIAIS\n§8Promoções e descontos");
+        form.button("§f HISTÓRICO DE COMPRAS\n§8Ver suas compras anteriores");
+        form.button("§f OFERTAS ESPECIAIS\n§8Promoções e descontos");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -205,15 +232,20 @@ export class ShopSystem {
         
         const form = new ActionFormData()
             .title(`${shop.name} - ${category.name}`)
-            .body(`§8Categoria: §f${category.name}\n§8 Seu dinheiro: ${this.core.formatMoney(balance)}\n\n§fItens disponíveis:`);
+            .body(`§7Categoria: §f${category.name}\n§7 Seu dinheiro: ${this.core.formatMoney(balance)}\n\n§fItens disponíveis:`);
 
         category.items.forEach(item => {
             const itemName = this.getItemDisplayName(item.id);
             const stockText = item.stock === -1 ? "∞" : item.stock.toString();
-            form.button(`§8${itemName}\n§8${this.core.formatMoney(item.price)} | ${item.count}x | Estoque: ${stockText}`);
+            const canAfford = balance >= item.price;
+            const inStock = item.stock !== 0;
+            
+            const statustextura = !inStock ? "§c" : !canAfford ? "§e" : "§a";
+            
+            form.button(`${statustextura} §f${itemName}\n§7${this.core.formatMoney(item.price)} §8| ${item.count}x | Estoque: ${stockText}`);
         });
 
-        form.button("§8⬅️ VOLTAR");
+        form.button("§c VOLTAR");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -245,8 +277,8 @@ export class ShopSystem {
 
         const form = new ModalFormData()
             .title("§6§l CONFIRMAR COMPRA")
-            .textField(`§8Item: §e${itemName}\n§8Preço unitário: ${this.core.formatMoney(item.price)}\n§8Quantidade por compra: §a${item.count}x\n\n§8Seu dinheiro: ${this.core.formatMoney(balance)}\n\n§fQuantas unidades comprar?`, "1", "")
-            .toggle("§8Compra em quantidade", false);
+            .textField(`§f§lItem: §e${itemName}\n§f§lPreço unitário: ${this.core.formatMoney(item.price)}\n§f§lQuantidade por compra: §a${item.count}x\n\n§7Seu dinheiro: ${this.core.formatMoney(balance)}\n\n§fQuantas unidades comprar?`, "1", "")
+            .toggle("§f§lCompra em quantidade", false);
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -323,9 +355,9 @@ export class ShopSystem {
         // Mensagens de sucesso
         const itemName = this.getItemDisplayName(item.id);
         player.sendMessage(`§a Compra realizada com sucesso!`);
-        player.sendMessage(`§8Item: §f${itemName} §8(${totalItems}x)`);
-        player.sendMessage(`§8Valor pago: ${this.core.formatMoney(totalPrice)}`);
-        player.sendMessage(`§8Saldo restante: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}`);
+        player.sendMessage(`§7Item: §f${itemName} §7(${totalItems}x)`);
+        player.sendMessage(`§7Valor pago: ${this.core.formatMoney(totalPrice)}`);
+        player.sendMessage(`§7Saldo restante: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}`);
 
         // Efeitos especiais para compras grandes
         if (totalPrice >= 10000) {
@@ -340,7 +372,7 @@ export class ShopSystem {
         const purchases = this.getPlayerPurchases(player.name);
         
         if (purchases.length === 0) {
-            player.sendMessage("§8Você ainda não fez nenhuma compra.");
+            player.sendMessage("§7Você ainda não fez nenhuma compra.");
             return;
         }
 
@@ -353,14 +385,14 @@ export class ShopSystem {
             const date = new Date(purchase.timestamp).toLocaleDateString();
             const itemName = this.getItemDisplayName(purchase.itemId);
             
-            history += `§f${index + 1}. §e${itemName} §8(${purchase.totalItems}x)\n`;
-            history += `§8   ${this.core.formatMoney(purchase.totalPrice)} - ${purchase.shopName} - ${date}\n`;
+            history += `§f${index + 1}. §e${itemName} §7(${purchase.totalItems}x)\n`;
+            history += `§7   ${this.core.formatMoney(purchase.totalPrice)} - ${purchase.shopName} - ${date}\n`;
             
             totalSpent += purchase.totalPrice;
         });
 
-        history += `\n§8Total gasto: ${this.core.formatMoney(totalSpent)}`;
-        history += `\n§8Compras registradas: ${purchases.length}`;
+        history += `\n§f§lTotal gasto: ${this.core.formatMoney(totalSpent)}`;
+        history += `\n§7Compras registradas: ${purchases.length}`;
 
         player.sendMessage(history);
     }
@@ -369,21 +401,22 @@ export class ShopSystem {
         const offers = this.generateSpecialOffers(shop);
         
         if (offers.length === 0) {
-            player.sendMessage("§8Nenhuma oferta especial disponível no momento.");
+            player.sendMessage("§7Nenhuma oferta especial disponível no momento.");
             return;
         }
 
         const form = new ActionFormData()
             .title("§b OFERTAS ESPECIAIS")
-            .body(`§8Promoções exclusivas da ${shop.name}!\n\n§8Aproveite enquanto durar:`);
+            .body(`§f§lPromoções exclusivas da ${shop.name}!\n\n§7Aproveite enquanto durar:`);
 
         offers.forEach(offer => {
             const itemName = this.getItemDisplayName(offer.itemId);
             const discount = Math.round((1 - offer.discountPrice / offer.originalPrice) * 100);
-            form.button(`§8${discount}% OFF ${itemName}\n§8De ${this.core.formatMoney(offer.originalPrice)} por ${this.core.formatMoney(offer.discountPrice)}`);
+            
+            form.button(`§a${discount}% OFF §f${itemName}\n§7De ${this.core.formatMoney(offer.originalPrice)} por ${this.core.formatMoney(offer.discountPrice)}`);
         });
 
-        form.button("§8⬅️ VOLTAR");
+        form.button("§c VOLTAR");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -405,8 +438,8 @@ export class ShopSystem {
 
         const form = new MessageFormData()
             .title("§b OFERTA ESPECIAL")
-            .body(`§8 PROMOÇÃO ESPECIAL!\n\n§8Item: §f${itemName}\n§8Quantidade: §a${offer.count}x\n§8Preço normal: §c${this.core.formatMoney(offer.originalPrice)}\n§8Preço promocional: §a${this.core.formatMoney(offer.discountPrice)}\n§8Desconto: §e${discount}%\n\n§8Seu dinheiro: ${this.core.formatMoney(balance)}\n\n§fAproveitar esta oferta?`)
-            .button1("§a✅ COMPRAR")
+            .body(`§f§l PROMOÇÃO ESPECIAL!\n\n§7Item: §f${itemName}\n§7Quantidade: §a${offer.count}x\n§7Preço normal: §c${this.core.formatMoney(offer.originalPrice)}\n§7Preço promocional: §a${this.core.formatMoney(offer.discountPrice)}\n§7Desconto: §e${discount}%\n\n§7Seu dinheiro: ${this.core.formatMoney(balance)}\n\n§fAproveitar esta oferta?`)
+            .button1("§a COMPRAR")
             .button2("§c CANCELAR");
 
         form.show(player).then((response) => {
@@ -432,10 +465,10 @@ export class ShopSystem {
             const itemStack = new ItemStack(offer.itemId, offer.count);
             inventory.addItem(itemStack);
 
-            player.sendMessage(`§a✅ Oferta aproveitada com sucesso!`);
-            player.sendMessage(`§8Item: §f${itemName} §8(${offer.count}x)`);
-            player.sendMessage(`§8Economia: ${this.core.formatMoney(offer.originalPrice - offer.discountPrice)}`);
-            player.sendMessage(`§8Valor pago: ${this.core.formatMoney(offer.discountPrice)}`);
+            player.sendMessage(`§a Oferta aproveitada com sucesso!`);
+            player.sendMessage(`§7Item: §f${itemName} §7(${offer.count}x)`);
+            player.sendMessage(`§7Economia: ${this.core.formatMoney(offer.originalPrice - offer.discountPrice)}`);
+            player.sendMessage(`§7Valor pago: ${this.core.formatMoney(offer.discountPrice)}`);
 
             // Registrar compra especial
             this.recordPurchase(player.name, shop.id, {
@@ -473,18 +506,31 @@ export class ShopSystem {
     }
 
     openNearestShop(player) {
-        // Simplificado - abrir loja geral
-        const generalShop = this.shops.get("general_store");
-        if (generalShop) {
-            this.openShopInterface(player, null);
-        } else {
-            player.sendMessage("§c Nenhuma loja encontrada!");
+        try {
+            // Simplificado - abrir loja geral
+            const generalShop = this.shops.get("general_store");
+            if (generalShop) {
+                // Criar um objeto mock para o NPC
+                const mockNPC = {
+                    getTags: () => ["shopnpc", "shop:general_store"]
+                };
+                this.openShopInterface(player, mockNPC);
+            } else {
+                player.sendMessage("§c Nenhuma loja encontrada!");
+            }
+        } catch (error) {
+            player.sendMessage("§c Erro ao abrir loja!");
+            world.sendMessage(`§c[Shop] Erro: ${error}`);
         }
     }
 
     // === UTILITÁRIOS ===
 
     getShopIdFromNPC(npcEntity) {
+        if (!npcEntity) {
+            return "general_store"; // Fallback para loja geral
+        }
+        
         const tags = npcEntity.getTags();
         
         // Procurar por tags específicas de loja
@@ -559,38 +605,67 @@ export class ShopSystem {
     }
 
     handleCreateShopCommand(player, message) {
-        // Função desativada, criação de loja só por código ou menu admin
-        player.sendMessage("§c Criação de loja por comando desativada. Use menus de NPC ou peça ao administrador.");
+        // Comando para admins criarem lojas
+        const parts = message.split(" ");
+        if (parts.length < 3) {
+            player.sendMessage("§c Use: !shop-create <id> <nome>");
+            return;
+        }
+
+        const shopId = parts[1];
+        const shopName = parts.slice(2).join(" ");
+
+        if (this.shops.has(shopId)) {
+            player.sendMessage("§c Loja com este ID já existe!");
+            return;
+        }
+
+        this.createShop(shopId, {
+            name: shopName,
+            description: "Loja criada por administrador",
+            categories: [
+                {
+                    name: "Itens Gerais",
+                    textura: "",
+                    items: [
+                        { id: "minecraft:dirt", count: 64, price: 50, stock: -1 }
+                    ]
+                }
+            ]
+        });
+
+        player.sendMessage(`§a Loja "${shopName}" criada com ID: ${shopId}`);
+        player.sendMessage(`§7Use NPCs com tag "shopnpc" e "shop:${shopId}" para acessá-la`);
     }
 
     showShopHelp(player) {
-        // Atualize para explicar uso por NPC
-        const help = `§6§l=== 🏪 AJUDA - SISTEMA DE LOJAS ===
+        const help = `§6§l===  AJUDA - SISTEMA DE LOJAS ===
 
-§8NPCs:
-§8• §ashopnpc §8- Acesso às lojas
-§8• Tags especiais: §ashop:loja_id
+§f§lComandos:
+§7• §e/economy shop §7- Abrir loja mais próxima
+§7• §e!purchases §7- Ver histórico de compras
 
-§8Funcionalidades:
-§8• Múltiplas categorias de itens
-§8• Sistema de estoque limitado
-§8• Ofertas especiais por tempo limitado
-§8• Histórico de compras detalhado
-§8• Pontos de fidelidade para compras grandes
+§f§lNPCs:
+§7• §ashopnpc §7- Acesso às lojas
+§7• Tags especiais: §ashop:loja_id
 
-§8Tipos de Loja:
-§8• §f🏪 Loja Geral §8- Itens básicos
-§8• §f Equipamentos §8- Armas e armaduras
-§8• §f Materiais Raros §8- Itens especiais
+§f§lFuncionalidades:
+§7• Múltiplas categorias de itens
+§7• Sistema de estoque limitado
+§7• Ofertas especiais por tempo limitado
+§7• Histórico de compras detalhado
+§7• Pontos de fidelidade para compras grandes
 
-§8Dicas:
-§8• Verifique ofertas especiais regularmente
-§8• Compras grandes dão pontos de fidelidade
-§8• Alguns itens têm estoque limitado
+§f§lTipos de Loja:
+§7• §f Loja Geral §7- Itens básicos
+§7• §f Equipamentos §7- Armas e armaduras
+§7• §f Materiais Raros §7- Itens especiais
 
-§8Como usar:
-§8• Interaja com NPCs com tag "shopnpc" para abrir o menu da loja.
-§8• Escolha categoria, item e confirme a compra pelo menu UI.`;
+§f§lDicas:
+§7• Verifique ofertas especiais regularmente
+§7• Compras grandes dão pontos de fidelidade
+§7• Alguns itens têm estoque limitado`;
+
         player.sendMessage(help);
     }
 

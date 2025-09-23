@@ -11,19 +11,19 @@ export class MoneySystem {
         world.sendMessage("§a[Money System] Sistema de dinheiro físico ativo!");
     }
 
-     initializeMoneyItems() {
+    initializeMoneyItems() {
         return {
             // Moedas
             coin_1: { value: 1, name: "Moeda de 1$", item: "economic:coin_1", color: "§e" },
-            coin_5: { value: 5, name: "Moeda de 5$", item: "economic:coin_2", color: "§7" },
-            coin_10: { value: 10, name: "Moeda de 10$", item: "economic:coin_3", color: "§6" },
+            coin_5: { value: 5, name: "Moeda de 5$", item: "economic:coin_5", color: "§7" },
+            coin_10: { value: 10, name: "Moeda de 10$", item: "economic:coin_10", color: "§6" },
             
             // Notas
-            note_20: { value: 20, name: "Nota de 20$", item: "economic:note_4", color: "§a" },
-            note_50: { value: 50, name: "Nota de 50$", item: "economic:note_5", color: "§b" },
-            note_100: { value: 100, name: "Nota de 100$", item: "economic:note_6", color: "§d" },
-            note_500: { value: 500, name: "Nota de 500$", item: "economic:note_7", color: "§c" },
-            note_1000: { value: 1000, name: "Nota de 1000$", item: "economic:note_8", color: "§f" }
+            note_20: { value: 20, name: "Nota de 20$", item: "economic:note_20", color: "§a" },
+            note_50: { value: 50, name: "Nota de 50$", item: "economic:note_50", color: "§b" },
+            note_100: { value: 100, name: "Nota de 100$", item: "economic:note_100", color: "§d" },
+            note_500: { value: 500, name: "Nota de 500$", item: "economic:note_500", color: "§c" },
+            note_1000: { value: 1000, name: "Nota de 1000$", item: "economic:note_1000", color: "§f" }
         };
     }
 
@@ -40,6 +40,19 @@ export class MoneySystem {
                 system.run(() => this.openMoneyInterface(player));
             });
         }
+
+        // Comandos de dinheiro
+        if (world.beforeEvents?.chatSend) {
+            world.beforeEvents.chatSend.subscribe((event) => {
+                const message = event.message.toLowerCase();
+                const player = event.sender;
+                
+                if (message === "!convert-money") {
+                    event.cancel = true;
+                    this.openMoneyInterface(player);
+                }
+            });
+        }
     }
 
     openMoneyInterface(player) {
@@ -47,13 +60,13 @@ export class MoneySystem {
         const bankBalance = this.core.getBankBalance(player.name);
         
         const form = new ActionFormData()
-            .title("§8 GERENCIADOR DE DINHEIRO")
-            .body(`§8Seus recursos financeiros:\n\n§8 Carteira: ${this.core.formatMoney(balance)}\n§8 Banco: ${this.core.formatMoney(bankBalance)}\n§8 Total: ${this.core.formatMoney(balance + bankBalance)}\n\n§8Escolha uma opção:`)
-            .button("§8 Converter para dinheiro físico")
-            .button("§8 Converter itens em saldo")
-            .button("§8 Ver extrato")
-            .button("§8 Transferir dinheiro")
-            .button("§8 Tabela de valores");
+            .title("§6§l GERENCIADOR DE DINHEIRO")
+            .body(`§f§lSeus recursos financeiros:\n\n§7💵 Carteira: ${this.core.formatMoney(balance)}\n§7🏦 Banco: ${this.core.formatMoney(bankBalance)}\n§7 Total: ${this.core.formatMoney(balance + bankBalance)}\n\n§fEscolha uma opção:`)
+            .button("§2§l💵 CONVERTER PARA DINHEIRO FÍSICO\n§7Transformar saldo em itens")
+            .button("§e§l🪙 CONVERTER ITENS EM SALDO\n§7Transformar itens em dinheiro digital")
+            .button("§b§l📊 VER EXTRATO\n§7Histórico de transações")
+            .button("§d§l💸 TRANSFERIR DINHEIRO\n§7Enviar para outro jogador")
+            .button("§a§l TABELA DE VALORES\n§7Ver valores das moedas e notas");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -87,8 +100,8 @@ export class MoneySystem {
         }
 
         const form = new ModalFormData()
-            .title("§2§l CONVERTER PARA FÍSICO")
-            .textField(`§8Saldo disponível: ${this.core.formatMoney(balance)}\n\n§8Digite o valor para converter em dinheiro físico:`, balance.toString(), "");
+            .title("§2§l💵 CONVERTER PARA FÍSICO")
+            .textField(`§f§lSaldo disponível: ${this.core.formatMoney(balance)}\n\n§7Digite o valor para converter em dinheiro físico:`, balance.toString(), "");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -134,8 +147,7 @@ export class MoneySystem {
                 // Adicionar lore personalizada para identificar como dinheiro
                 item.setLore([
                     `${moneyData.color}${moneyData.name}`,
-                    `§8Valor: ${this.core.formatMoney(moneyData.value)}`,
-                    `§8Dinheiro oficial do servidor`
+                    `§7Valor: ${this.core.formatMoney(moneyData.value)}`
                 ]);
 
                 inventory.addItem(item);
@@ -143,9 +155,9 @@ export class MoneySystem {
             }
         }
 
-        player.sendMessage(`§a✅ Conversão realizada com sucesso!`);
-        player.sendMessage(`§8Valor convertido: ${this.core.formatMoney(totalGiven)}`);
-        player.sendMessage(`§8Itens adicionados ao inventário`);
+        player.sendMessage(`§a Conversão realizada com sucesso!`);
+        player.sendMessage(`§7Valor convertido: ${this.core.formatMoney(totalGiven)}`);
+        player.sendMessage(`§7Itens adicionados ao inventário`);
         
         this.showBreakdownMessage(player, moneyBreakdown);
     }
@@ -176,7 +188,7 @@ export class MoneySystem {
     }
 
     showBreakdownMessage(player, breakdown) {
-        let message = "§8 DINHEIRO RECEBIDO:\n";
+        let message = "§e§l DINHEIRO RECEBIDO:\n";
         
         for (const [type, count] of Object.entries(breakdown)) {
             if (count > 0) {
@@ -204,10 +216,10 @@ export class MoneySystem {
         }
 
         const form = new ActionFormData()
-            .title("§8🪙 Converter para digital")
-            .body(`§8Dinheiro físico encontrado:\n\n${this.formatMoneyItemsList(moneyItems)}\n§8Valor total: ${this.core.formatMoney(totalValue)}\n\n§8Converter tudo para saldo digital?`)
-            .button("§8Converter tudo")
-            .button("§8Cancelar");
+            .title("§e§l🪙 CONVERTER PARA DIGITAL")
+            .body(`§f§lDinheiro físico encontrado:\n\n${this.formatMoneyItemsList(moneyItems)}\n§f§lValor total: ${this.core.formatMoney(totalValue)}\n\n§7Converter tudo para saldo digital?`)
+            .button("§a CONVERTER TUDO")
+            .button("§c CANCELAR");
 
         form.show(player).then((response) => {
             if (response.canceled || response.selection === 1) return;
@@ -237,11 +249,14 @@ export class MoneySystem {
 
     identifyMoneyItem(item) {
         const lore = item.getLore();
-        if (!lore || lore.length < 3) return null;
-        if (!lore[2].includes("Dinheiro oficial do servidor")) return null;
+        if (!lore || lore.length < 1) return null;
+        
+        // Verificar se é dinheiro oficial pelo nome do item ou lore
+        const itemName = item.nameTag || "";
+        const firstLore = lore[0] || "";
 
         for (const [type, data] of Object.entries(this.moneyItems)) {
-            if (item.typeId === data.item && lore[0].includes(data.name)) {
+            if (item.typeId === data.item && (itemName.includes(data.name) || firstLore.includes(data.name))) {
                 return type;
             }
         }
@@ -262,7 +277,7 @@ export class MoneySystem {
         for (const [type, count] of Object.entries(moneyItems)) {
             if (count > 0) {
                 const data = this.moneyItems[type];
-                list += `§8• ${count}x ${data.color}${data.name} §8(${this.core.formatMoney(data.value * count)})\n`;
+                list += `§7• ${count}x ${data.color}${data.name} §7(${this.core.formatMoney(data.value * count)})\n`;
             }
         }
         return list;
@@ -298,9 +313,9 @@ export class MoneySystem {
         // Adicionar ao saldo digital
         this.core.addMoney(player.name, totalValue, "Conversão de dinheiro físico");
 
-        player.sendMessage(`§a✅ Conversão realizada com sucesso!`);
-        player.sendMessage(`§8Valor convertido: ${this.core.formatMoney(totalValue)}`);
-        player.sendMessage(`§8Novo saldo: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}`);
+        player.sendMessage(`§a Conversão realizada com sucesso!`);
+        player.sendMessage(`§7Valor convertido: ${this.core.formatMoney(totalValue)}`);
+        player.sendMessage(`§7Novo saldo: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}`);
     }
 
     showBalance(player) {
@@ -310,17 +325,17 @@ export class MoneySystem {
         
         const message = `§6§l=== ${this.core.getMoneyIcon(balance + bankBalance)} SEU DINHEIRO ===
 
-§8Saldos:
-§8 Carteira: ${this.core.formatMoney(balance)}
-§8 Banco: ${this.core.formatMoney(bankBalance)}
-§8 Total: ${this.core.formatMoney(stats.totalWealth)}
+§f§lSaldos:
+§7💵 Carteira: ${this.core.formatMoney(balance)}
+§7🏦 Banco: ${this.core.formatMoney(bankBalance)}
+§7 Total: ${this.core.formatMoney(stats.totalWealth)}
 
-§8Estatísticas:
-§8 Total ganho: ${this.core.formatMoney(stats.totalEarned)}
-§8 Total gasto: ${this.core.formatMoney(stats.totalSpent)}
-§8 Transações: ${stats.transactionCount}
+§f§lEstatísticas:
+§7📈 Total ganho: ${this.core.formatMoney(stats.totalEarned)}
+§7📉 Total gasto: ${this.core.formatMoney(stats.totalSpent)}
+§7🔄 Transações: ${stats.transactionCount}
 
-§8Use !money-help para ver comandos`;
+§7Use !money-help para ver comandos`;
 
         player.sendMessage(message);
     }
@@ -350,10 +365,10 @@ export class MoneySystem {
             return;
         }
 
-        player.sendMessage(`§a✅ Pagamento realizado com sucesso!`);
-        player.sendMessage(`§8Para: §f${targetName}`);
-        player.sendMessage(`§8Valor: ${this.core.formatMoney(amount)}`);
-        player.sendMessage(`§8Saldo restante: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}`);
+        player.sendMessage(`§a Pagamento realizado com sucesso!`);
+        player.sendMessage(`§7Para: §f${targetName}`);
+        player.sendMessage(`§7Valor: ${this.core.formatMoney(amount)}`);
+        player.sendMessage(`§7Saldo restante: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}`);
 
         // Notificar o destinatário
         const targetPlayer = world.getPlayers().find(p => p.name === targetName);
@@ -366,9 +381,9 @@ export class MoneySystem {
         const balance = this.core.getWalletBalance(player.name);
         
         const form = new ModalFormData()
-            .title("§8💸 TRANSFERIR DINHEIRO")
-            .textField("§8Nome do destinatário:", "Steve", "")
-            .textField(`§8Seu saldo: ${this.core.formatMoney(balance)}\n\n§8Valor da transferência:`, "100", "");
+            .title("§d§l💸 TRANSFERIR DINHEIRO")
+            .textField("§f§lNome do destinatário:", "Steve", "")
+            .textField(`§f§lSeu saldo: ${this.core.formatMoney(balance)}\n\n§7Valor da transferência:`, "100", "");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -391,9 +406,9 @@ export class MoneySystem {
                 return;
             }
 
-            player.sendMessage(`§a✅ Transferência realizada com sucesso!`);
-            player.sendMessage(`§8Para: §f${targetName}`);
-            player.sendMessage(`§8Valor: ${this.core.formatMoney(amount)}`);
+            player.sendMessage(`§a Transferência realizada com sucesso!`);
+            player.sendMessage(`§7Para: §f${targetName}`);
+            player.sendMessage(`§7Valor: ${this.core.formatMoney(amount)}`);
 
             const targetPlayer = world.getPlayers().find(p => p.name === targetName);
             if (targetPlayer) {
@@ -406,18 +421,18 @@ export class MoneySystem {
         const transactions = this.core.getPlayerTransactions(player.name, 10);
         
         if (transactions.length === 0) {
-            player.sendMessage("§8Nenhuma transação encontrada.");
+            player.sendMessage("§7Nenhuma transação encontrada.");
             return;
         }
 
-        let history = `§6§l===  HISTÓRICO DE TRANSAÇÕES ===\n\n`;
+        let history = `§6§l=== 📊 HISTÓRICO DE TRANSAÇÕES ===\n\n`;
         
         transactions.forEach((transaction, index) => {
             const typeIcon = this.getTransactionIcon(transaction.type);
             const date = new Date(transaction.timestamp).toLocaleDateString();
             
             history += `§f${index + 1}. ${typeIcon} ${transaction.description}\n`;
-            history += `§8   ${this.core.formatMoney(transaction.amount)} - ${date}\n`;
+            history += `§7   ${this.core.formatMoney(transaction.amount)} - ${date}\n`;
         });
 
         player.sendMessage(history);
@@ -432,48 +447,52 @@ export class MoneySystem {
             bank_transfer_in: "§e🏦➡",
             bank_transfer_out: "§e🏦⬅"
         };
-        return icons[type] || "§8↔";
+        return icons[type] || "§7↔";
     }
 
     showMoneyTable(player) {
         const table = `§6§l===  TABELA DE VALORES ===
 
-§8Moedas:
-§e• Moeda de 1$: §8Pepita de Ouro
-§8• Moeda de 5$: §8Pepita de Ferro  
-§6• Moeda de 10$: §8Lingote de Cobre
+§f§lMoedas:
+§e• Moeda de 1$: §7Item personalizado
+§7• Moeda de 5$: §7Item personalizado  
+§6• Moeda de 10$: §7Item personalizado
 
-§8Notas:
-§a• Nota de 20$: §8Papel
-§b• Nota de 50$: §8Livro
-§d• Nota de 100$: §8Livro Encantado
-§c• Nota de 500$: §8Etiqueta
-§f• Nota de 1000$: §8Estrela do Nether
+§f§lNotas:
+§a• Nota de 20$: §7Item personalizado
+§b• Nota de 50$: §7Item personalizado
+§d• Nota de 100$: §7Item personalizado
+§c• Nota de 500$: §7Item personalizado
+§f• Nota de 1000$: §7Item personalizado
 
-§8Dicas:
-§8• Use NPCs com tag "moneynpc" para conversões
-§8• Dinheiro físico pode ser perdido se morrer
-§8• Dinheiro digital é mais seguro`;
+§f§lDicas:
+§7• Use NPCs com tag "moneynpc" para conversões
+§7• Dinheiro físico pode ser perdido se morrer
+§7• Dinheiro digital é mais seguro`;
 
         player.sendMessage(table);
     }
 
     showMoneyHelp(player) {
-        // Atualize para explicar uso por NPC
         const help = `§6§l===  AJUDA - SISTEMA DE DINHEIRO ===
 
-§8NPCs:
-§8• §amoneynpc §8- Gerenciar dinheiro físico/digital
+§f§lComandos:
+§7• §e/balance §7- Ver seu saldo completo
+§7• §e/pay <jogador> <valor> §7- Pagar alguém
+§7• §e!convert-money §7- Abrir conversor
 
-§8Funcionalidades:
-§8• Converter saldo em dinheiro físico (itens)
-§8• Converter dinheiro físico em saldo digital
-§8• Transferir dinheiro entre jogadores
-§8• Ver histórico de transações
+§f§lNPCs:
+§7• §amoneynpc §7- Gerenciar dinheiro físico/digital
 
-§8Como usar:
-§8• Interaja com NPCs com tag "moneynpc" para abrir o menu de dinheiro.
-§8• Escolha a opção desejada pelo menu UI.`;
+§f§lFuncionalidades:
+§7• Converter saldo em dinheiro físico (itens)
+§7• Converter dinheiro físico em saldo digital
+§7• Transferir dinheiro entre jogadores
+§7• Ver histórico de transações
+
+§f§lTipos de Dinheiro:
+§7• §eDigital §7- Seguro, não se perde
+§7• §6Físico §7- Itens reais, pode ser perdido`;
 
         player.sendMessage(help);
     }

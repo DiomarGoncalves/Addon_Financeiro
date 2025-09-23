@@ -1,16 +1,14 @@
-## Economic Addon - Textos em Português
-
-# Itens de Dinheiro
-item.economic:coin_1=§e💰 Moeda de 1$
-item.economic:coin_5=§7💰 Moeda de 5$
-item.economic:coin_10=§6💰 Moeda de 10$
+item.economic:coin_1=§e Moeda de 1$
+item.economic:coin_5=§7 Moeda de 5$
+item.economic:coin_10=§6 Moeda de 10$
 item.economic:note_20=§a💵 Nota de 20$
 item.economic:note_50=§b💵 Nota de 50$
 item.economic:note_100=§d💵 Nota de 100$
 item.economic:note_500=§c💵 Nota de 500$
 item.economic:note_1000=§f💵 Nota de 1000$
+item.economic:phone=Celular Economico
+item.economic:admin_tablet=Tablet de Administracao
 
-# Mensagens do sistema
-economy.money.converted=§a✅ Dinheiro convertido com sucesso!
-economy.money.insufficient=§c❌ Dinheiro insuficiente!
-economy.money.invalid_amount=§c❌ Valor inválido!
+economy.money.converted=Dinheiro convertido com sucesso!
+economy.money.insufficient=Dinheiro insuficiente!
+economy.money.invalid_amount=Valor invalido!

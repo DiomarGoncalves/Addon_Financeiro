@@ -16,6 +16,38 @@ export class ExchangeSystem {
         world.sendMessage("§a[Exchange System] Casa de câmbio ativa!");
     }
 
+    // Limpa todos os dados internos
+    clearData() {
+        this.exchangeRates.clear();
+        this.dailyLimits.clear();
+        this.playerExchanges.clear();
+    }
+
+    // Salva os dados no DynamicProperty
+    saveExchangeData() {
+        const data = {
+            exchangeRates: Array.from(this.exchangeRates.entries()),
+            dailyLimits: Array.from(this.dailyLimits.entries()),
+            playerExchanges: Array.from(this.playerExchanges.entries()),
+        };
+        world.setDynamicProperty("exchangeSystemData", JSON.stringify(data));
+    }
+
+    // Carrega os dados do DynamicProperty
+    loadExchangeData() {
+        const dataStr = world.getDynamicProperty("exchangeSystemData");
+        if (!dataStr) return;
+
+        try {
+            const data = JSON.parse(dataStr);
+            this.exchangeRates = new Map(data.exchangeRates);
+            this.dailyLimits = new Map(data.dailyLimits);
+            this.playerExchanges = new Map(data.playerExchanges);
+        } catch (e) {
+            world.sendMessage("Erro ao carregar dados da casa de câmbio: " + e);
+        }
+    }
+
     setupEvents() {
         // Interação com NPC de câmbio
         if (world.beforeEvents?.playerInteractWithEntity) {
@@ -27,6 +59,24 @@ export class ExchangeSystem {
                 
                 event.cancel = true;
                 system.run(() => this.openExchangeInterface(player));
+            });
+        }
+
+        // Comandos de câmbio
+        if (world.beforeEvents?.chatSend) {
+            world.beforeEvents.chatSend.subscribe((event) => {
+                const message = event.message.toLowerCase();
+                const player = event.sender;
+                
+                if (message === "!cotacao") {
+                    event.cancel = true;
+                    this.showExchangeRates(player);
+                }
+                
+                if (message === "!exchange-history") {
+                    event.cancel = true;
+                    this.showExchangeHistory(player);
+                }
             });
         }
     }
@@ -109,15 +159,15 @@ export class ExchangeSystem {
         const todayExchanges = this.getTodayExchangeCount(player.name);
         
         const form = new ActionFormData()
-            .title("§8§8 CASA DE CÂMBIO")
-            .body(`§8Bem-vindo à Casa de Câmbio!\n\n§8 Seu dinheiro: ${this.core.formatMoney(balance)}\n§8 Trocas hoje: §8${todayExchanges}\n\n§8Serviços disponíveis:`)
-            .button("§8 Vender minerais")
-            .button("§8 Vender itens do Nether")
-            .button("§8 Vender itens do End")
-            .button("§8 Vender produtos agrícolas")
-            .button("§8 Vender drops de mobs")
-            .button("§8 Ver cotações")
-            .button("§8 Histórico de trocas");
+            .title("§6§l💱 CASA DE CÂMBIO")
+            .body(`§f§lBem-vindo à Casa de Câmbio!\n\n§7 Seu dinheiro: ${this.core.formatMoney(balance)}\n§7📊 Trocas hoje: §f${todayExchanges}\n\n§fServiços disponíveis:`)
+            .button("§2§l VENDER MINERAIS\n§7Trocar minerais por dinheiro")
+            .button("§e§l🔥 VENDER ITENS DO NETHER\n§7Materiais do Nether")
+            .button("§d§l🌌 VENDER ITENS DO END\n§7Materiais do End")
+            .button("§a§l🌾 VENDER PRODUTOS AGRÍCOLAS\n§7Itens de farming")
+            .button("§c§l💀 VENDER DROPS DE MOBS\n§7Itens de criaturas")
+            .button("§b§l VER COTAÇÕES\n§7Preços atuais")
+            .button("§f§l📊 HISTÓRICO DE TROCAS\n§7Suas vendas anteriores");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -164,7 +214,7 @@ export class ExchangeSystem {
             "minecraft:magma_cream", "minecraft:glowstone_dust", "minecraft:netherrack"
         ];
         
-        this.showCategoryExchange(player, netherItems, " ITENS DO NETHER", "Materiais raros do Nether!");
+        this.showCategoryExchange(player, netherItems, "🔥 ITENS DO NETHER", "Materiais raros do Nether!");
     }
 
     showEndExchange(player) {
@@ -173,7 +223,7 @@ export class ExchangeSystem {
             "minecraft:dragon_breath", "minecraft:end_stone"
         ];
         
-        this.showCategoryExchange(player, endItems, " ITENS DO END", "Materiais místicos do End!");
+        this.showCategoryExchange(player, endItems, "🌌 ITENS DO END", "Materiais místicos do End!");
     }
 
     showFarmingExchange(player) {
@@ -182,7 +232,7 @@ export class ExchangeSystem {
             "minecraft:beetroot", "minecraft:sugar_cane", "minecraft:pumpkin", "minecraft:melon"
         ];
         
-        this.showCategoryExchange(player, farmItems, " PRODUTOS AGRÍCOLAS", "Venda sua colheita!");
+        this.showCategoryExchange(player, farmItems, "🌾 PRODUTOS AGRÍCOLAS", "Venda sua colheita!");
     }
 
     showMobDropExchange(player) {
@@ -191,7 +241,7 @@ export class ExchangeSystem {
             "minecraft:spider_eye", "minecraft:slime_ball", "minecraft:phantom_membrane"
         ];
         
-        this.showCategoryExchange(player, mobDrops, " DROPS DE MOBS", "Itens de criaturas!");
+        this.showCategoryExchange(player, mobDrops, "💀 DROPS DE MOBS", "Itens de criaturas!");
     }
 
     showCategoryExchange(player, itemIds, categoryTitle, categoryDescription) {
@@ -223,17 +273,18 @@ export class ExchangeSystem {
         }
 
         const form = new ActionFormData()
-            .title(`§6§l§8 ${categoryTitle}`)
-            .body(`§f${categoryDescription}\n\n§8Itens disponíveis no seu inventário:`);
+            .title(`§6§l💱 ${categoryTitle}`)
+            .body(`§f${categoryDescription}\n\n§7Itens disponíveis no seu inventário:`);
 
         availableItems.forEach(item => {
             const itemName = this.getItemDisplayName(item.itemId);
             const currentPrice = this.getCurrentPrice(item.rate);
             const totalValue = currentPrice * item.count;
-            form.button(`§8${itemName}\n§8${item.count}x | ${this.core.formatMoney(currentPrice)} cada | Total: ${this.core.formatMoney(totalValue)}`);
+            
+            form.button(`§f${itemName}\n§7${item.count}x | ${this.core.formatMoney(currentPrice)} cada | Total: ${this.core.formatMoney(totalValue)}`);
         });
 
-        form.button("§8⬅️ Voltar");
+        form.button("§c VOLTAR");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -257,13 +308,13 @@ export class ExchangeSystem {
 
         if (maxSellable <= 0) {
             player.sendMessage(`§c Limite diário atingido para ${itemName}!`);
-            player.sendMessage(`§8Limite diário: ${itemData.rate.dailyLimit} itens`);
+            player.sendMessage(`§7Limite diário: ${itemData.rate.dailyLimit} itens`);
             return;
         }
 
         const form = new ModalFormData()
-            .title(`§6§l§8 VENDER ${itemName.toUpperCase()}`)
-            .textField(`§8Item: §e${itemName}\n§8Preço atual: ${this.core.formatMoney(currentPrice)} cada\n§8Disponível: §a${itemData.count}x\n§8Limite diário restante: §b${maxSellable}x\n\n§8Quantidade para vender:`, Math.min(maxSellable, itemData.count).toString(), "");
+            .title(`§6§l💱 VENDER ${itemName.toUpperCase()}`)
+            .textField(`§f§lItem: §e${itemName}\n§f§lPreço atual: ${this.core.formatMoney(currentPrice)} cada\n§f§lDisponível: §a${itemData.count}x\n§f§lLimite diário restante: §b${maxSellable}x\n\n§7Quantidade para vender:`, Math.min(maxSellable, itemData.count).toString(), "");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -344,11 +395,11 @@ export class ExchangeSystem {
 
         // Mensagens de sucesso
         const itemName = this.getItemDisplayName(itemId);
-        player.sendMessage(`§a✅ Venda realizada com sucesso!`);
-        player.sendMessage(`§8Item: §f${itemName} §8(${amount}x)`);
-        player.sendMessage(`§8Preço unitário: ${this.core.formatMoney(unitPrice)}`);
-        player.sendMessage(`§8Valor recebido: ${this.core.formatMoney(totalValue)}${bonusMessage}`);
-        player.sendMessage(`§8Novo saldo: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}`);
+        player.sendMessage(`§a Venda realizada com sucesso!`);
+        player.sendMessage(`§7Item: §f${itemName} §7(${amount}x)`);
+        player.sendMessage(`§7Preço unitário: ${this.core.formatMoney(unitPrice)}`);
+        player.sendMessage(`§7Valor recebido: ${this.core.formatMoney(totalValue)}${bonusMessage}`);
+        player.sendMessage(`§7Novo saldo: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}`);
 
         // Atualizar flutuação de preços
         this.updatePriceFluctuation(itemId, amount);
@@ -359,16 +410,16 @@ export class ExchangeSystem {
     showExchangeRates(player) {
         const categories = {
             " Minerais": ["minecraft:coal", "minecraft:iron_ingot", "minecraft:gold_ingot", "minecraft:diamond", "minecraft:emerald"],
-            " Nether": ["minecraft:blaze_rod", "minecraft:ghast_tear", "minecraft:nether_wart", "minecraft:magma_cream"],
-            " End": ["minecraft:ender_pearl", "minecraft:chorus_fruit", "minecraft:shulker_shell"],
-            " Farming": ["minecraft:wheat", "minecraft:carrot", "minecraft:potato", "minecraft:sugar_cane"],
-            " Mob Drops": ["minecraft:bone", "minecraft:string", "minecraft:gunpowder", "minecraft:slime_ball"]
+            "🔥 Nether": ["minecraft:blaze_rod", "minecraft:ghast_tear", "minecraft:nether_wart", "minecraft:magma_cream"],
+            "🌌 End": ["minecraft:ender_pearl", "minecraft:chorus_fruit", "minecraft:shulker_shell"],
+            "🌾 Farming": ["minecraft:wheat", "minecraft:carrot", "minecraft:potato", "minecraft:sugar_cane"],
+            "💀 Mob Drops": ["minecraft:bone", "minecraft:string", "minecraft:gunpowder", "minecraft:slime_ball"]
         };
 
-        let ratesMessage = `§6§l=== §8 COTAÇÕES ATUAIS ===\n\n`;
+        let ratesMessage = `§6§l=== 💱 COTAÇÕES ATUAIS ===\n\n`;
 
         for (const [categoryName, items] of Object.entries(categories)) {
-            ratesMessage += `§8${categoryName}:\n`;
+            ratesMessage += `§f§l${categoryName}:\n`;
             
             for (const itemId of items) {
                 const rate = this.exchangeRates.get(itemId);
@@ -377,14 +428,14 @@ export class ExchangeSystem {
                     const currentPrice = this.getCurrentPrice(rate);
                     const trend = this.getPriceTrend(rate);
                     
-                    ratesMessage += `§8• §f${itemName}: ${this.core.formatMoney(currentPrice)} ${trend}\n`;
+                    ratesMessage += `§7• §f${itemName}: ${this.core.formatMoney(currentPrice)} ${trend}\n`;
                 }
             }
             ratesMessage += "\n";
         }
 
-        ratesMessage += `§8§lPreços atualizados automaticamente\n`;
-        ratesMessage += `§8Flutuação baseada na oferta e demanda`;
+        ratesMessage += `§7§lPreços atualizados automaticamente\n`;
+        ratesMessage += `§7Flutuação baseada na oferta e demanda`;
 
         player.sendMessage(ratesMessage);
     }
@@ -393,11 +444,11 @@ export class ExchangeSystem {
         const exchanges = this.getPlayerExchanges(player.name);
         
         if (exchanges.length === 0) {
-            player.sendMessage("§8Você ainda não fez nenhuma troca.");
+            player.sendMessage("§7Você ainda não fez nenhuma troca.");
             return;
         }
 
-        let history = `§6§l===  HISTÓRICO DE TROCAS ===\n\n`;
+        let history = `§6§l=== 📊 HISTÓRICO DE TROCAS ===\n\n`;
         
         const recentExchanges = exchanges.slice(-10).reverse();
         let totalEarned = 0;
@@ -406,14 +457,14 @@ export class ExchangeSystem {
             const date = new Date(exchange.timestamp).toLocaleDateString();
             const itemName = this.getItemDisplayName(exchange.itemId);
             
-            history += `§f${index + 1}. §e${itemName} §8(${exchange.amount}x)\n`;
-            history += `§8   ${this.core.formatMoney(exchange.totalValue)} - ${date}\n`;
+            history += `§f${index + 1}. §e${itemName} §7(${exchange.amount}x)\n`;
+            history += `§7   ${this.core.formatMoney(exchange.totalValue)} - ${date}\n`;
             
             totalEarned += exchange.totalValue;
         });
 
-        history += `\n§8Total ganho: ${this.core.formatMoney(totalEarned)}`;
-        history += `\n§8Trocas registradas: ${exchanges.length}`;
+        history += `\n§f§lTotal ganho: ${this.core.formatMoney(totalEarned)}`;
+        history += `\n§7Trocas registradas: ${exchanges.length}`;
 
         player.sendMessage(history);
     }
@@ -439,7 +490,7 @@ export class ExchangeSystem {
     getPriceTrend(rate) {
         if (rate.fluctuation > 1.05) return "§a📈";
         if (rate.fluctuation < 0.95) return "§c📉";
-        return "§8➡";
+        return "§7➡";
     }
 
     updatePriceFluctuation(itemId, soldAmount) {
@@ -534,22 +585,36 @@ export class ExchangeSystem {
     }
 
     showExchangeHelp(player) {
-        // Atualize para explicar uso por NPC
-        const help = `§6§l=== §8 AJUDA - CASA DE CÂMBIO ===
+        const help = `§6§l=== 💱 AJUDA - CASA DE CÂMBIO ===
 
-§8NPCs:
-§8• §aexchangenpc §8- Acesso ao câmbio
+§f§lComandos:
+§7• §e/economy exchange §7- Abrir casa de câmbio
+§7• §e!cotacao §7- Ver preços atuais
+§7• §e!exchange-history §7- Histórico de vendas
 
-§8Funcionalidades:
-§8• Venda itens por dinheiro
-§8• Preços flutuam com oferta/demanda
-§8• Limites diários por item
-§8• Bônus por quantidade (64+ itens)
-§8• Histórico detalhado de vendas
+§f§lNPCs:
+§7• §aexchangenpc §7- Acesso ao câmbio
 
-§8Como usar:
-§8• Interaja com NPCs com tag "exchangenpc" para abrir o menu de câmbio.
-§8• Escolha a opção desejada pelo menu UI.`;
+§f§lFuncionalidades:
+§7• Venda itens por dinheiro
+§7• Preços flutuam com oferta/demanda
+§7• Limites diários por item
+§7• Bônus por quantidade (64+ itens)
+§7• Histórico detalhado de vendas
+
+§f§lCategorias:
+§7• §f Minerais §7- Carvão, ferro, ouro, diamante
+§7• §f🔥 Nether §7- Blaze rod, lágrima de ghast
+§7• §f🌌 End §7- Pérola do end, fruta chorus
+§7• §f🌾 Farming §7- Trigo, cenoura, batata
+§7• §f💀 Mob Drops §7- Osso, linha, pólvora
+
+§f§lDicas:
+§7• Preços mudam baseado na demanda
+§7• Venda em grandes quantidades para bônus
+§7• Verifique limites diários
+§7• Monitore tendências de preços`;
+
         player.sendMessage(help);
     }
 

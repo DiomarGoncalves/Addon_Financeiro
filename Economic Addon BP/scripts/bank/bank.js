@@ -14,6 +14,15 @@ export class BankSystem {
         world.sendMessage("§a[Bank System] Sistema bancário ativo!");
     }
 
+    // Método para resetar todos os dados internos
+    clearData() {
+        this.bankAccounts.clear();
+        this.loanSystem.clear();
+        this.investmentSystem.clear();
+    }
+
+
+
     setupEvents() {
         // Interação com NPC do banco
         if (world.beforeEvents?.playerInteractWithEntity) {
@@ -48,15 +57,15 @@ export class BankSystem {
         const account = this.getBankAccount(player.name);
         
         const form = new ActionFormData()
-            .title("§8 BANCO CENTRAL")
-            .body(`§8Bem-vindo ao Banco Central!\n\n§8 Carteira: ${this.core.formatMoney(walletBalance)}\n§8 Conta Bancária: ${this.core.formatMoney(bankBalance)}\n§8 Tipo de Conta: §f${account.accountType}\n\n§fServiços disponíveis:`)
-            .button("§8 DEPOSITAR\n§8Guardar dinheiro na conta")
-            .button("§8 SACAR\n§8Retirar dinheiro da conta")
-            .button("§8 TRANSFERÊNCIA BANCÁRIA\n§8Enviar para outra conta")
-            .button("§8 EXTRATO BANCÁRIO\n§8Ver movimentações da conta")
-            .button("§8 EMPRÉSTIMOS\n§8Solicitar crédito")
-            .button("§8 INVESTIMENTOS\n§8Aplicar seu dinheiro")
-            .button("§8 CONFIGURAÇÕES\n§8Gerenciar sua conta");
+            .title("§6§l🏦 BANCO CENTRAL")
+            .body(`§f§lBem-vindo ao Banco Central!\n\n§7💵 Carteira: ${this.core.formatMoney(walletBalance)}\n§7🏦 Conta Bancária: ${this.core.formatMoney(bankBalance)}\n§7📊 Tipo de Conta: §f${account.accountType}\n\n§fServiços disponíveis:`)
+            .button("§2§l DEPOSITAR\n§7Guardar dinheiro na conta")
+            .button("§c§l💸 SACAR\n§7Retirar dinheiro da conta")
+            .button("§b§l💳 TRANSFERÊNCIA BANCÁRIA\n§7Enviar para outra conta")
+            .button("§e§l📊 EXTRATO BANCÁRIO\n§7Ver movimentações da conta")
+            .button("§d§l🎯 EMPRÉSTIMOS\n§7Solicitar crédito")
+            .button("§a§l INVESTIMENTOS\n§7Aplicar seu dinheiro")
+            .button("§f§l⚙️ CONFIGURAÇÕES\n§7Gerenciar sua conta");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -97,7 +106,7 @@ export class BankSystem {
 
         const form = new ModalFormData()
             .title("§2§l DEPÓSITO BANCÁRIO")
-            .textField(`§8Saldo na carteira: ${this.core.formatMoney(walletBalance)}\n\n§8Digite o valor para depositar:`, walletBalance.toString(), "");
+            .textField(`§f§lSaldo na carteira: ${this.core.formatMoney(walletBalance)}\n\n§7Digite o valor para depositar:`, walletBalance.toString(), "");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -119,9 +128,9 @@ export class BankSystem {
                 account.totalDeposits += amount;
                 account.lastActivity = new Date().toISOString();
                 
-                player.sendMessage(`§a✅ Depósito realizado com sucesso!`);
-                player.sendMessage(`§8Valor depositado: ${this.core.formatMoney(amount)}`);
-                player.sendMessage(`§8Novo saldo bancário: ${this.core.formatMoney(this.core.getBankBalance(player.name))}`);
+                player.sendMessage(`§a Depósito realizado com sucesso!`);
+                player.sendMessage(`§7Valor depositado: ${this.core.formatMoney(amount)}`);
+                player.sendMessage(`§7Novo saldo bancário: ${this.core.formatMoney(this.core.getBankBalance(player.name))}`);
                 
                 this.saveBankData();
             } else {
@@ -140,7 +149,7 @@ export class BankSystem {
 
         const form = new ModalFormData()
             .title("§c§l💸 SAQUE BANCÁRIO")
-            .textField(`§8Saldo no banco: ${this.core.formatMoney(bankBalance)}\n\n§8Digite o valor para sacar:`, Math.min(bankBalance, 10000).toString(), "");
+            .textField(`§f§lSaldo no banco: ${this.core.formatMoney(bankBalance)}\n\n§7Digite o valor para sacar:`, Math.min(bankBalance, 10000).toString(), "");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -162,9 +171,9 @@ export class BankSystem {
                 account.totalWithdrawals += amount;
                 account.lastActivity = new Date().toISOString();
                 
-                player.sendMessage(`§a✅ Saque realizado com sucesso!`);
-                player.sendMessage(`§8Valor sacado: ${this.core.formatMoney(amount)}`);
-                player.sendMessage(`§8Novo saldo bancário: ${this.core.formatMoney(this.core.getBankBalance(player.name))}`);
+                player.sendMessage(`§a Saque realizado com sucesso!`);
+                player.sendMessage(`§7Valor sacado: ${this.core.formatMoney(amount)}`);
+                player.sendMessage(`§7Novo saldo bancário: ${this.core.formatMoney(this.core.getBankBalance(player.name))}`);
                 
                 this.saveBankData();
             } else {
@@ -182,10 +191,10 @@ export class BankSystem {
         }
 
         const form = new ModalFormData()
-            .title("§8💳 TRANSFERÊNCIA BANCÁRIA")
-            .textField("§8Nome do destinatário:", "Steve", "")
-            .textField(`§8Seu saldo bancário: ${this.core.formatMoney(bankBalance)}\n\n§8Valor da transferência:`, "1000", "")
-            .textField("§8Descrição (opcional):", "Transferência", "");
+            .title("§b§l💳 TRANSFERÊNCIA BANCÁRIA")
+            .textField("§f§lNome do destinatário:", "Steve", "")
+            .textField(`§f§lSeu saldo bancário: ${this.core.formatMoney(bankBalance)}\n\n§7Valor da transferência:`, "1000", "")
+            .textField("§f§lDescrição (opcional):", "Transferência", "");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -228,19 +237,19 @@ export class BankSystem {
                 senderAccount.totalTransfersSent += amount;
                 receiverAccount.totalTransfersReceived += amount;
                 
-                player.sendMessage(`§a✅ Transferência realizada com sucesso!`);
-                player.sendMessage(`§8Para: §f${targetName}`);
-                player.sendMessage(`§8Valor: ${this.core.formatMoney(amount)}`);
-                player.sendMessage(`§8Taxa: ${this.core.formatMoney(fee)}`);
-                player.sendMessage(`§8Total debitado: ${this.core.formatMoney(totalAmount)}`);
+                player.sendMessage(`§a Transferência realizada com sucesso!`);
+                player.sendMessage(`§7Para: §f${targetName}`);
+                player.sendMessage(`§7Valor: ${this.core.formatMoney(amount)}`);
+                player.sendMessage(`§7Taxa: ${this.core.formatMoney(fee)}`);
+                player.sendMessage(`§7Total debitado: ${this.core.formatMoney(totalAmount)}`);
 
                 // Notificar destinatário
                 const targetPlayer = world.getPlayers().find(p => p.name === targetName);
                 if (targetPlayer) {
                     targetPlayer.sendMessage(`§a🏦 Transferência bancária recebida!`);
-                    targetPlayer.sendMessage(`§8De: §f${player.name}`);
-                    targetPlayer.sendMessage(`§8Valor: ${this.core.formatMoney(amount)}`);
-                    targetPlayer.sendMessage(`§8Descrição: §f${description}`);
+                    targetPlayer.sendMessage(`§7De: §f${player.name}`);
+                    targetPlayer.sendMessage(`§7Valor: ${this.core.formatMoney(amount)}`);
+                    targetPlayer.sendMessage(`§7Descrição: §f${description}`);
                 }
                 
                 this.saveBankData();
@@ -255,29 +264,29 @@ export class BankSystem {
         const account = this.getBankAccount(player.name);
         
         if (transactions.length === 0) {
-            player.sendMessage("§8Nenhuma movimentação bancária encontrada.");
+            player.sendMessage("§7Nenhuma movimentação bancária encontrada.");
             return;
         }
 
         let statement = `§6§l=== 🏦 EXTRATO BANCÁRIO ===\n`;
-        statement += `§8Conta: §f${player.name}\n`;
-        statement += `§8Tipo: §f${account.accountType}\n`;
-        statement += `§8Criada em: §f${new Date(account.createdDate).toLocaleDateString()}\n\n`;
+        statement += `§7Conta: §f${player.name}\n`;
+        statement += `§7Tipo: §f${account.accountType}\n`;
+        statement += `§7Criada em: §f${new Date(account.createdDate).toLocaleDateString()}\n\n`;
         
         const bankTransactions = transactions.filter(t => 
             t.type.includes('bank') || t.type.includes('transfer')
         );
         
         if (bankTransactions.length === 0) {
-            statement += `§8Nenhuma movimentação bancária encontrada.`;
+            statement += `§7Nenhuma movimentação bancária encontrada.`;
         } else {
-            statement += `§8Últimas movimentações:\n`;
+            statement += `§f§lÚltimas movimentações:\n`;
             bankTransactions.slice(0, 10).forEach((transaction, index) => {
                 const typeIcon = this.getBankTransactionIcon(transaction.type);
                 const date = new Date(transaction.timestamp).toLocaleDateString();
                 
                 statement += `§f${index + 1}. ${typeIcon} ${transaction.description}\n`;
-                statement += `§8   ${this.core.formatMoney(transaction.amount)} - ${date}\n`;
+                statement += `§7   ${this.core.formatMoney(transaction.amount)} - ${date}\n`;
             });
         }
 
@@ -294,12 +303,12 @@ export class BankSystem {
         }
 
         const form = new ActionFormData()
-            .title("§8 SISTEMA DE EMPRÉSTIMOS")
-            .body(`§8Solicite um empréstimo bancário!\n\n§8Sua conta: §f${account.accountType}\n§8Histórico: §f${account.creditScore}/100\n\n§fOpções disponíveis:`)
-            .button("§8 EMPRÉSTIMO PEQUENO\n§8Até $10.000 - Juros 5%")
-            .button("§8 EMPRÉSTIMO MÉDIO\n§8Até $50.000 - Juros 8%")
-            .button("§8 EMPRÉSTIMO GRANDE\n§8Até $200.000 - Juros 12%")
-            .button("§8 SIMULAR EMPRÉSTIMO\n§8Calcular parcelas");
+            .title("§d§l🎯 SISTEMA DE EMPRÉSTIMOS")
+            .body(`§f§lSolicite um empréstimo bancário!\n\n§7Sua conta: §f${account.accountType}\n§7Histórico: §f${account.creditScore}/100\n\n§fOpções disponíveis:`)
+            .button("§a§l💵 EMPRÉSTIMO PEQUENO\n§7Até $10.000 - Juros 5%")
+            .button("§e§l EMPRÉSTIMO MÉDIO\n§7Até $50.000 - Juros 8%")
+            .button("§c§l EMPRÉSTIMO GRANDE\n§7Até $200.000 - Juros 12%")
+            .button("§b§l📊 SIMULAR EMPRÉSTIMO\n§7Calcular parcelas");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -321,9 +330,9 @@ export class BankSystem {
 
     showLoanApplicationForm(player, loanType) {
         const form = new ModalFormData()
-            .title(`§8🎯 EMPRÉSTIMO ${loanType.name.toUpperCase()}`)
-            .textField(`§8Valor máximo: ${this.core.formatMoney(loanType.max)}\n§8Juros: ${(loanType.interest * 100).toFixed(1)}%\n\n§8Digite o valor desejado:`, loanType.max.toString(), "")
-            .dropdown("§8Parcelas:", ["6 meses", "12 meses", "24 meses", "36 meses"], 1);
+            .title(`§d§l🎯 EMPRÉSTIMO ${loanType.name.toUpperCase()}`)
+            .textField(`§f§lValor máximo: ${this.core.formatMoney(loanType.max)}\n§f§lJuros: ${(loanType.interest * 100).toFixed(1)}%\n\n§7Digite o valor desejado:`, loanType.max.toString(), "")
+            .dropdown("§f§lParcelas:", ["6 meses", "12 meses", "24 meses", "36 meses"], 1);
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -372,22 +381,22 @@ export class BankSystem {
         account.totalLoans += amount;
         account.creditScore = Math.max(account.creditScore - 10, 0); // Reduz score temporariamente
 
-        player.sendMessage(`§a✅ Empréstimo aprovado!`);
-        player.sendMessage(`§8Valor liberado: ${this.core.formatMoney(amount)}`);
-        player.sendMessage(`§8Total a pagar: ${this.core.formatMoney(totalAmount)}`);
-        player.sendMessage(`§8Parcelas: ${installments}x de ${this.core.formatMoney(monthlyPayment)}`);
-        player.sendMessage(`§8Próximo pagamento: ${new Date(loan.nextPaymentDate).toLocaleDateString()}`);
+        player.sendMessage(`§a Empréstimo aprovado!`);
+        player.sendMessage(`§7Valor liberado: ${this.core.formatMoney(amount)}`);
+        player.sendMessage(`§7Total a pagar: ${this.core.formatMoney(totalAmount)}`);
+        player.sendMessage(`§7Parcelas: ${installments}x de ${this.core.formatMoney(monthlyPayment)}`);
+        player.sendMessage(`§7Próximo pagamento: ${new Date(loan.nextPaymentDate).toLocaleDateString()}`);
 
         this.saveBankData();
     }
 
     showActiveLoanInfo(player, loan) {
         const form = new ActionFormData()
-            .title("§8🎯 SEU EMPRÉSTIMO ATIVO")
-            .body(`§8Informações do empréstimo:\n\n§8Valor restante: §c${this.core.formatMoney(loan.remainingAmount)}\n§8Parcela mensal: §e${this.core.formatMoney(loan.monthlyPayment)}\n§8Parcelas restantes: §f${loan.remainingInstallments}\n§8Próximo pagamento: §f${new Date(loan.nextPaymentDate).toLocaleDateString()}\n\n§fOpções:`)
-            .button("§8 PAGAR PARCELA\n§8Pagar mensalidade")
-            .button("§8💵 QUITAR EMPRÉSTIMO\n§8Pagar tudo de uma vez")
-            .button("§8 DETALHES COMPLETOS\n§8Ver informações detalhadas");
+            .title("§d§l🎯 SEU EMPRÉSTIMO ATIVO")
+            .body(`§f§lInformações do empréstimo:\n\n§7Valor restante: §c${this.core.formatMoney(loan.remainingAmount)}\n§7Parcela mensal: §e${this.core.formatMoney(loan.monthlyPayment)}\n§7Parcelas restantes: §f${loan.remainingInstallments}\n§7Próximo pagamento: §f${new Date(loan.nextPaymentDate).toLocaleDateString()}\n\n§fOpções:`)
+            .button("§a§l PAGAR PARCELA\n§7Pagar mensalidade")
+            .button("§e§l💵 QUITAR EMPRÉSTIMO\n§7Pagar tudo de uma vez")
+            .button("§b§l📊 DETALHES COMPLETOS\n§7Ver informações detalhadas");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -430,12 +439,12 @@ export class BankSystem {
             const account = this.getBankAccount(player.name);
             account.creditScore = Math.min(account.creditScore + 15, 100);
             
-            player.sendMessage(`§a✅ Empréstimo quitado completamente!`);
-            player.sendMessage(`§8Seu score de crédito foi melhorado!`);
+            player.sendMessage(`§a Empréstimo quitado completamente!`);
+            player.sendMessage(`§7Seu score de crédito foi melhorado!`);
         } else {
-            player.sendMessage(`§a✅ Parcela paga com sucesso!`);
-            player.sendMessage(`§8Parcelas restantes: ${loan.remainingInstallments}`);
-            player.sendMessage(`§8Próximo pagamento: ${new Date(loan.nextPaymentDate).toLocaleDateString()}`);
+            player.sendMessage(`§a Parcela paga com sucesso!`);
+            player.sendMessage(`§7Parcelas restantes: ${loan.remainingInstallments}`);
+            player.sendMessage(`§7Próximo pagamento: ${new Date(loan.nextPaymentDate).toLocaleDateString()}`);
         }
 
         this.core.addTransaction(player.name, "loan_payment", loan.monthlyPayment, "Pagamento de empréstimo", bankBalance - loan.monthlyPayment);
@@ -451,9 +460,9 @@ export class BankSystem {
         }
 
         const form = new MessageFormData()
-            .title("§8💵 QUITAR EMPRÉSTIMO")
-            .body(`§8Confirmar quitação?\n\n§8Valor total: §c${this.core.formatMoney(loan.remainingAmount)}\n§8Seu saldo: §a${this.core.formatMoney(bankBalance)}\n\n§aVocê receberá um bônus no score de crédito!`)
-            .button1("§a✅ QUITAR")
+            .title("§e§l💵 QUITAR EMPRÉSTIMO")
+            .body(`§f§lConfirmar quitação?\n\n§7Valor total: §c${this.core.formatMoney(loan.remainingAmount)}\n§7Seu saldo: §a${this.core.formatMoney(bankBalance)}\n\n§aVocê receberá um bônus no score de crédito!`)
+            .button1("§a QUITAR")
             .button2("§c CANCELAR");
 
         form.show(player).then((response) => {
@@ -470,9 +479,9 @@ export class BankSystem {
             const account = this.getBankAccount(player.name);
             account.creditScore = Math.min(account.creditScore + 25, 100);
             
-            player.sendMessage(`§a✅ Empréstimo quitado antecipadamente!`);
-            player.sendMessage(`§8Valor pago: ${this.core.formatMoney(loan.remainingAmount)}`);
-            player.sendMessage(`§8Bônus no score de crédito aplicado!`);
+            player.sendMessage(`§a Empréstimo quitado antecipadamente!`);
+            player.sendMessage(`§7Valor pago: ${this.core.formatMoney(loan.remainingAmount)}`);
+            player.sendMessage(`§7Bônus no score de crédito aplicado!`);
             
             this.core.addTransaction(player.name, "loan_payoff", loan.remainingAmount, "Quitação antecipada de empréstimo", bankBalance - loan.remainingAmount);
             this.saveBankData();
@@ -484,12 +493,12 @@ export class BankSystem {
         const currentInvestment = this.investmentSystem.get(player.name);
         
         const form = new ActionFormData()
-            .title("§8 CENTRO DE INVESTIMENTOS")
-            .body(`§8Faça seu dinheiro render!\n\n§8Saldo bancário: ${this.core.formatMoney(bankBalance)}\n${currentInvestment ? `§8Investimento ativo: ${this.core.formatMoney(currentInvestment.amount)}` : '§8Nenhum investimento ativo'}\n\n§fOpções de investimento:`)
-            .button("§2§l🟢 POUPANÇA SEGURA\n§8Rendimento: 2% ao mês")
-            .button("§8🟡 INVESTIMENTO MODERADO\n§8Rendimento: 5% ao mês")
-            .button("§c§l🔴 INVESTIMENTO ARRISCADO\n§8Rendimento: 10% ao mês")
-            .button("§8 RESGATAR INVESTIMENTO\n§8Sacar valor investido");
+            .title("§a§l CENTRO DE INVESTIMENTOS")
+            .body(`§f§lFaça seu dinheiro render!\n\n§7Saldo bancário: ${this.core.formatMoney(bankBalance)}\n${currentInvestment ? `§7Investimento ativo: ${this.core.formatMoney(currentInvestment.amount)}` : '§7Nenhum investimento ativo'}\n\n§fOpções de investimento:`)
+            .button("§2§l🟢 POUPANÇA SEGURA\n§7Rendimento: 2% ao mês")
+            .button("§e§l🟡 INVESTIMENTO MODERADO\n§7Rendimento: 5% ao mês")
+            .button("§c§l🔴 INVESTIMENTO ARRISCADO\n§7Rendimento: 10% ao mês")
+            .button("§b§l📊 RESGATAR INVESTIMENTO\n§7Sacar valor investido");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -518,8 +527,8 @@ export class BankSystem {
         }
 
         const form = new ModalFormData()
-            .title(`§8 ${investmentType.name.toUpperCase()}`)
-            .textField(`§8Rendimento: ${(investmentType.rate * 100).toFixed(1)}% ao mês\n§8Risco: ${investmentType.risk > 0 ? 'Alto' : 'Baixo'}\n§8Mínimo: ${this.core.formatMoney(investmentType.minAmount)}\n\n§8Digite o valor para investir:`, investmentType.minAmount.toString(), "");
+            .title(`§a§l ${investmentType.name.toUpperCase()}`)
+            .textField(`§f§lRendimento: ${(investmentType.rate * 100).toFixed(1)}% ao mês\n§f§lRisco: ${investmentType.risk > 0 ? 'Alto' : 'Baixo'}\n§f§lMínimo: ${this.core.formatMoney(investmentType.minAmount)}\n\n§7Digite o valor para investir:`, investmentType.minAmount.toString(), "");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -565,11 +574,11 @@ export class BankSystem {
 
         this.investmentSystem.set(player.name, investment);
 
-        player.sendMessage(`§a✅ Investimento realizado com sucesso!`);
-        player.sendMessage(`§8Tipo: §f${investmentType.name}`);
-        player.sendMessage(`§8Valor: ${this.core.formatMoney(amount)}`);
-        player.sendMessage(`§8Rendimento: §a${(investmentType.rate * 100).toFixed(1)}% ao mês`);
-        player.sendMessage(`§8O rendimento será aplicado automaticamente!`);
+        player.sendMessage(`§a Investimento realizado com sucesso!`);
+        player.sendMessage(`§7Tipo: §f${investmentType.name}`);
+        player.sendMessage(`§7Valor: ${this.core.formatMoney(amount)}`);
+        player.sendMessage(`§7Rendimento: §a${(investmentType.rate * 100).toFixed(1)}% ao mês`);
+        player.sendMessage(`§7O rendimento será aplicado automaticamente!`);
 
         this.core.addTransaction(player.name, "investment", amount, `Investimento: ${investmentType.name}`, bankBalance - amount);
         this.saveBankData();
@@ -587,9 +596,9 @@ export class BankSystem {
         const currentValue = this.calculateInvestmentValue(investment);
 
         const form = new MessageFormData()
-            .title("§8 RESGATAR INVESTIMENTO")
-            .body(`§8Seu investimento:\n\n§8Tipo: §f${investment.type}\n§8Valor inicial: ${this.core.formatMoney(investment.originalAmount)}\n§8Valor atual: §a${this.core.formatMoney(currentValue)}\n§8Rendimento: §a${this.core.formatMoney(currentValue - investment.originalAmount)}\n§8Tempo ativo: §f${monthsActive} meses\n\n§fResgatar investimento?`)
-            .button1("§a✅ RESGATAR")
+            .title("§b§l📊 RESGATAR INVESTIMENTO")
+            .body(`§f§lSeu investimento:\n\n§7Tipo: §f${investment.type}\n§7Valor inicial: ${this.core.formatMoney(investment.originalAmount)}\n§7Valor atual: §a${this.core.formatMoney(currentValue)}\n§7Rendimento: §a${this.core.formatMoney(currentValue - investment.originalAmount)}\n§7Tempo ativo: §f${monthsActive} meses\n\n§fResgatar investimento?`)
+            .button1("§a RESGATAR")
             .button2("§c MANTER INVESTINDO");
 
         form.show(player).then((response) => {
@@ -609,10 +618,10 @@ export class BankSystem {
 
         const profit = currentValue - investment.originalAmount;
 
-        player.sendMessage(`§a✅ Investimento resgatado com sucesso!`);
-        player.sendMessage(`§8Valor resgatado: ${this.core.formatMoney(currentValue)}`);
-        player.sendMessage(`§8Lucro obtido: §a${this.core.formatMoney(profit)}`);
-        player.sendMessage(`§8Novo saldo bancário: ${this.core.formatMoney(bankBalance + currentValue)}`);
+        player.sendMessage(`§a Investimento resgatado com sucesso!`);
+        player.sendMessage(`§7Valor resgatado: ${this.core.formatMoney(currentValue)}`);
+        player.sendMessage(`§7Lucro obtido: §a${this.core.formatMoney(profit)}`);
+        player.sendMessage(`§7Novo saldo bancário: ${this.core.formatMoney(bankBalance + currentValue)}`);
 
         this.core.addTransaction(player.name, "investment_withdraw", currentValue, `Resgate de investimento: ${investment.type}`, bankBalance + currentValue);
         this.saveBankData();
@@ -644,11 +653,11 @@ export class BankSystem {
         const account = this.getBankAccount(player.name);
         
         const form = new ActionFormData()
-            .title("§8⚙️ CONFIGURAÇÕES DA CONTA")
-            .body(`§8Informações da conta:\n\n§8Nome: §f${player.name}\n§8Tipo: §f${account.accountType}\n§8Score: §f${account.creditScore}/100\n§8Criada em: §f${new Date(account.createdDate).toLocaleDateString()}\n\n§fOpções:`)
-            .button("§8⬆️ UPGRADE DE CONTA\n§8Melhorar tipo de conta")
-            .button("§8 RELATÓRIO COMPLETO\n§8Ver estatísticas detalhadas")
-            .button("§8🎯 MELHORAR SCORE\n§8Dicas para aumentar crédito");
+            .title("§f§l⚙️ CONFIGURAÇÕES DA CONTA")
+            .body(`§f§lInformações da conta:\n\n§7Nome: §f${player.name}\n§7Tipo: §f${account.accountType}\n§7Score: §f${account.creditScore}/100\n§7Criada em: §f${new Date(account.createdDate).toLocaleDateString()}\n\n§fOpções:`)
+            .button("§e§l⬆️ UPGRADE DE CONTA\n§7Melhorar tipo de conta")
+            .button("§b§l📊 RELATÓRIO COMPLETO\n§7Ver estatísticas detalhadas")
+            .button("§d§l🎯 MELHORAR SCORE\n§7Dicas para aumentar crédito");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -680,14 +689,14 @@ export class BankSystem {
         const upgrade = upgrades[account.accountType];
         
         if (!upgrade) {
-            player.sendMessage("§a✅ Você já possui a conta mais premium disponível!");
+            player.sendMessage("§a Você já possui a conta mais premium disponível!");
             return;
         }
 
         const form = new MessageFormData()
-            .title("§8⬆️ UPGRADE DE CONTA")
-            .body(`§8Upgrade disponível:\n\n§8De: §f${account.accountType}\n§8Para: §a${upgrade.next}\n§8Custo: §c${this.core.formatMoney(upgrade.cost)}\n§8Benefícios: §f${upgrade.benefits}\n\n§8Seu saldo: ${this.core.formatMoney(bankBalance)}\n\n§fRealizar upgrade?`)
-            .button1("§a✅ FAZER UPGRADE")
+            .title("§e§l⬆️ UPGRADE DE CONTA")
+            .body(`§f§lUpgrade disponível:\n\n§7De: §f${account.accountType}\n§7Para: §a${upgrade.next}\n§7Custo: §c${this.core.formatMoney(upgrade.cost)}\n§7Benefícios: §f${upgrade.benefits}\n\n§7Seu saldo: ${this.core.formatMoney(bankBalance)}\n\n§fRealizar upgrade?`)
+            .button1("§a FAZER UPGRADE")
             .button2("§c CANCELAR");
 
         form.show(player).then((response) => {
@@ -705,9 +714,9 @@ export class BankSystem {
             account.accountType = upgrade.next;
             account.creditScore = Math.min(account.creditScore + 10, 100);
 
-            player.sendMessage(`§a✅ Upgrade realizado com sucesso!`);
-            player.sendMessage(`§8Nova conta: §a${upgrade.next}`);
-            player.sendMessage(`§8Score melhorado em 10 pontos!`);
+            player.sendMessage(`§a Upgrade realizado com sucesso!`);
+            player.sendMessage(`§7Nova conta: §a${upgrade.next}`);
+            player.sendMessage(`§7Score melhorado em 10 pontos!`);
 
             this.core.addTransaction(player.name, "account_upgrade", upgrade.cost, `Upgrade para conta ${upgrade.next}`, bankBalance - upgrade.cost);
             this.saveBankData();
@@ -718,28 +727,28 @@ export class BankSystem {
         const account = this.getBankAccount(player.name);
         const stats = this.core.getPlayerStats(player.name);
         
-        const report = `§6§l===  RELATÓRIO DA CONTA ===
+        const report = `§6§l=== 📊 RELATÓRIO DA CONTA ===
 
-§8Informações Gerais:
-§8• Nome: §f${player.name}
-§8• Tipo de Conta: §f${account.accountType}
-§8• Score de Crédito: §f${account.creditScore}/100
-§8• Membro desde: §f${new Date(account.createdDate).toLocaleDateString()}
+§f§lInformações Gerais:
+§7• Nome: §f${player.name}
+§7• Tipo de Conta: §f${account.accountType}
+§7• Score de Crédito: §f${account.creditScore}/100
+§7• Membro desde: §f${new Date(account.createdDate).toLocaleDateString()}
 
-§8Movimentação Financeira:
-§8• Total depositado: ${this.core.formatMoney(account.totalDeposits)}
-§8• Total sacado: ${this.core.formatMoney(account.totalWithdrawals)}
-§8• Transferências enviadas: ${this.core.formatMoney(account.totalTransfersSent)}
-§8• Transferências recebidas: ${this.core.formatMoney(account.totalTransfersReceived)}
+§f§lMovimentação Financeira:
+§7• Total depositado: ${this.core.formatMoney(account.totalDeposits)}
+§7• Total sacado: ${this.core.formatMoney(account.totalWithdrawals)}
+§7• Transferências enviadas: ${this.core.formatMoney(account.totalTransfersSent)}
+§7• Transferências recebidas: ${this.core.formatMoney(account.totalTransfersReceived)}
 
-§8Patrimônio Atual:
-§8• Carteira: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}
-§8• Banco: ${this.core.formatMoney(this.core.getBankBalance(player.name))}
-§8• Total: ${this.core.formatMoney(stats.totalWealth)}
+§f§lPatrimônio Atual:
+§7• Carteira: ${this.core.formatMoney(this.core.getWalletBalance(player.name))}
+§7• Banco: ${this.core.formatMoney(this.core.getBankBalance(player.name))}
+§7• Total: ${this.core.formatMoney(stats.totalWealth)}
 
-§8Histórico de Crédito:
-§8• Empréstimos totais: ${this.core.formatMoney(account.totalLoans)}
-§8• Status atual: ${this.loanSystem.has(player.name) ? '§cEmpréstimo ativo' : '§aLivre de dívidas'}`;
+§f§lHistórico de Crédito:
+§7• Empréstimos totais: ${this.core.formatMoney(account.totalLoans)}
+§7• Status atual: ${this.loanSystem.has(player.name) ? '§cEmpréstimo ativo' : '§aLivre de dívidas'}`;
 
         player.sendMessage(report);
     }
@@ -747,19 +756,19 @@ export class BankSystem {
     showCreditTips(player) {
         const tips = `§6§l=== 🎯 DICAS PARA MELHORAR SEU SCORE ===
 
-§8✅ Ações que AUMENTAM o score:
+§f§l Ações que AUMENTAM o score:
 §a• Pagar empréstimos em dia (+5 pontos)
 §a• Quitar empréstimos antecipadamente (+25 pontos)
 §a• Fazer upgrade de conta (+10 pontos)
 §a• Manter saldo alto no banco (+1 ponto/mês)
 §a• Usar serviços bancários regularmente (+2 pontos/mês)
 
-§8 Ações que DIMINUEM o score:
+§f§l Ações que DIMINUEM o score:
 §c• Pegar empréstimos (-10 pontos temporário)
 §c• Atrasar pagamentos (-20 pontos)
 §c• Ter conta com saldo baixo (-1 ponto/mês)
 
-§8💡 Dicas especiais:
+§f§l Dicas especiais:
 §e• Score máximo: 100 pontos
 §e• Score mínimo para empréstimos: 50 pontos
 §e• Score é atualizado automaticamente
@@ -795,12 +804,12 @@ export class BankSystem {
             bank_transfer_in: "§b🏦➡",
             bank_transfer_out: "§e🏦⬅",
             loan_payment: "§d💳",
-            loan_payoff: "§a💳✅",
+            loan_payoff: "§a💳",
             investment: "§a⬆",
             investment_withdraw: "§e⬇",
             account_upgrade: "§f⬆️"
         };
-        return icons[type] || "§8🏦";
+        return icons[type] || "§7🏦";
     }
 
     calculateNextPaymentDate() {
@@ -812,26 +821,26 @@ export class BankSystem {
     showBankHelp(player) {
         const help = `§6§l=== 🏦 AJUDA - SISTEMA BANCÁRIO ===
 
-§8Serviços Básicos:
-§8• §e/economy bank §8- Abrir interface do banco
-§8• §e!extrato §8- Ver movimentações
+§f§lServiços Básicos:
+§7• §e/economy bank §7- Abrir interface do banco
+§7• §e!extrato §7- Ver movimentações
 
-§8NPCs:
-§8• §abanknpc §8- Acesso completo ao banco
+§f§lNPCs:
+§7• §abanknpc §7- Acesso completo ao banco
 
-§8Funcionalidades:
-§8• Depósitos e saques
-§8• Transferências bancárias (taxa 1%)
-§8• Empréstimos com juros
-§8• Investimentos com rendimento
-§8• Sistema de score de crédito
-§8• Upgrade de contas
+§f§lFuncionalidades:
+§7• Depósitos e saques
+§7• Transferências bancárias (taxa 1%)
+§7• Empréstimos com juros
+§7• Investimentos com rendimento
+§7• Sistema de score de crédito
+§7• Upgrade de contas
 
-§8Tipos de Conta:
-§8• §fBásica §8- Conta inicial
-§8• §aPremium §8- Benefícios extras
-§8• §bVIP §8- Serviços exclusivos
-§8• §0Black §8- Conta premium máxima`;
+§f§lTipos de Conta:
+§7• §fBásica §7- Conta inicial
+§7• §aPremium §7- Benefícios extras
+§7• §bVIP §7- Serviços exclusivos
+§7• §0Black §7- Conta premium máxima`;
 
         player.sendMessage(help);
     }

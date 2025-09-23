@@ -12,10 +12,10 @@
       "textures": "textures/items/money3"
     },
     "economic_note_20": {
-      "textures": "textures/items/money4"
+      "textures": "textures/items/money5"
     },
     "economic_note_50": {
-      "textures": "textures/items/money5"
+      "textures": "textures/items/money4"
     },
     "economic_note_100": {
       "textures": "textures/items/money6"
@@ -25,6 +25,12 @@
     },
     "economic_note_1000": {
       "textures": "textures/items/money8"
+    },
+    "economic_phone": {
+      "textures": "textures/items/phone"
+    },
+    "economic_admin_tablet": {
+      "textures": "textures/items/admin_tablet"
     }
   }
 }

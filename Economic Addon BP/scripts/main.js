@@ -4,6 +4,8 @@ import { BankSystem } from './bank/bank.js';
 import { ShopSystem } from './shop/shop.js';
 import { ExchangeSystem } from './exchange/exchange.js';
 import { MoneySystem } from './money/money.js';
+import { PhoneSystem } from './phone/phoneSystem.js';
+import { AdminSystem } from './admin/adminSystem.js';
 
 // Sistema Principal de Economia
 class EconomicAddon {
@@ -13,22 +15,30 @@ class EconomicAddon {
         this.shopSystem = null;
         this.exchangeSystem = null;
         this.moneySystem = null;
+        this.phoneSystem = null;
+        this.adminSystem = null;
         this.initialized = false;
     }
 
     async initialize() {
         try {
-
+            world.sendMessage("[Economic Addon] Iniciando sistema economico completo...");
+            
+            // Inicializar sistemas em ordem
             this.economyCore = new EconomyCore();
             this.moneySystem = new MoneySystem(this.economyCore);
             this.bankSystem = new BankSystem(this.economyCore);
             this.shopSystem = new ShopSystem(this.economyCore);
             this.exchangeSystem = new ExchangeSystem(this.economyCore);
+            this.phoneSystem = new PhoneSystem(this.economyCore, this.bankSystem, this.shopSystem, this.exchangeSystem, this.moneySystem);
+            this.adminSystem = new AdminSystem(this.economyCore, this.bankSystem, this.shopSystem, this.exchangeSystem, this.moneySystem);
+            
             this.initialized = true;
-            world.sendMessage("§a[Economic Addon] Sistema econômico ativo!");
-           
+            world.sendMessage("[Economic Addon] Sistema economico ativo!");
+            world.sendMessage("Use o celular para acessar todos os servicos!");
+            
         } catch (error) {
-            world.sendMessage(`§c[Economic Addon] Erro na inicialização: ${error}`);
+            world.sendMessage(`[Economic Addon] Erro na inicializacao: ${error}`);
         }
     }
 }
@@ -38,21 +48,10 @@ let economicAddon = null;
 
 // Inicializar addon
 system.runTimeout(() => {
-    world.sendMessage("§e[Economic Addon] Carregando...");
+    world.sendMessage("[Economic Addon] Carregando...");
     economicAddon = new EconomicAddon();
     economicAddon.initialize();
 }, 20);
 
 // Exportar para debug global
 globalThis.economicAddon = economicAddon;
-
-/*
-Como usar o addon:
-- Coloque NPCs com as tags:
-    • banknpc      → abre o banco
-    • shopnpc      → abre a loja
-    • exchangenpc  → abre a casa de câmbio
-    • moneynpc     → abre o gerenciador de dinheiro físico/digital
-- Interaja com o NPC para abrir o menu correspondente.
-- Todo o sistema funciona apenas por menus e NPCs, sem comandos no chat.
-*/
