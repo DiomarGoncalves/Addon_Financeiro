@@ -1,5 +1,5 @@
 Como usar o Economic Addon completo (versão sem comandos, só menus e NPCs):
-Ative o Behavior Pack no seu mundo
+Ative o Behavior Pack no seu mundo.
 
 Abra as configurações do mundo.
 Vá em "Pacotes de Comportamento" e ative o "Economic Addon BP".
