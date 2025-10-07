@@ -62,9 +62,9 @@ export class BankSystem {
             .button("§2§l DEPOSITAR\n§7Guardar dinheiro na conta")
             .button("§c§l💸 SACAR\n§7Retirar dinheiro da conta")
             .button("§b§l💳 TRANSFERÊNCIA BANCÁRIA\n§7Enviar para outra conta")
-            .button("§e§l📊 EXTRATO BANCÁRIO\n§7Ver movimentações da conta")
-            .button("§d§l🎯 EMPRÉSTIMOS\n§7Solicitar crédito")
-            .button("§a§l INVESTIMENTOS\n§7Aplicar seu dinheiro")
+            .button("§7 EXTRATO BANCÁRIO\n§7Ver movimentações da conta")
+            .button("§7 EMPRÉSTIMOS\n§7Solicitar crédito")
+            .button("§7 INVESTIMENTOS\n§7Aplicar seu dinheiro")
             .button("§f§l⚙️ CONFIGURAÇÕES\n§7Gerenciar sua conta");
 
         form.show(player).then((response) => {
@@ -303,9 +303,9 @@ export class BankSystem {
         }
 
         const form = new ActionFormData()
-            .title("§d§l🎯 SISTEMA DE EMPRÉSTIMOS")
+            .title("§7 SISTEMA DE EMPRÉSTIMOS")
             .body(`§f§lSolicite um empréstimo bancário!\n\n§7Sua conta: §f${account.accountType}\n§7Histórico: §f${account.creditScore}/100\n\n§fOpções disponíveis:`)
-            .button("§a§l💵 EMPRÉSTIMO PEQUENO\n§7Até $10.000 - Juros 5%")
+            .button("§7💵 EMPRÉSTIMO PEQUENO\n§7Até $10.000 - Juros 5%")
             .button("§e§l EMPRÉSTIMO MÉDIO\n§7Até $50.000 - Juros 8%")
             .button("§c§l EMPRÉSTIMO GRANDE\n§7Até $200.000 - Juros 12%")
             .button("§b§l📊 SIMULAR EMPRÉSTIMO\n§7Calcular parcelas");
@@ -330,7 +330,7 @@ export class BankSystem {
 
     showLoanApplicationForm(player, loanType) {
         const form = new ModalFormData()
-            .title(`§d§l🎯 EMPRÉSTIMO ${loanType.name.toUpperCase()}`)
+            .title(`§7 EMPRÉSTIMO ${loanType.name.toUpperCase()}`)
             .textField(`§f§lValor máximo: ${this.core.formatMoney(loanType.max)}\n§f§lJuros: ${(loanType.interest * 100).toFixed(1)}%\n\n§7Digite o valor desejado:`, loanType.max.toString(), "")
             .dropdown("§f§lParcelas:", ["6 meses", "12 meses", "24 meses", "36 meses"], 1);
 
@@ -392,9 +392,9 @@ export class BankSystem {
 
     showActiveLoanInfo(player, loan) {
         const form = new ActionFormData()
-            .title("§d§l🎯 SEU EMPRÉSTIMO ATIVO")
+            .title("§7 SEU EMPRÉSTIMO ATIVO")
             .body(`§f§lInformações do empréstimo:\n\n§7Valor restante: §c${this.core.formatMoney(loan.remainingAmount)}\n§7Parcela mensal: §e${this.core.formatMoney(loan.monthlyPayment)}\n§7Parcelas restantes: §f${loan.remainingInstallments}\n§7Próximo pagamento: §f${new Date(loan.nextPaymentDate).toLocaleDateString()}\n\n§fOpções:`)
-            .button("§a§l PAGAR PARCELA\n§7Pagar mensalidade")
+            .button("§7 PAGAR PARCELA\n§7Pagar mensalidade")
             .button("§e§l💵 QUITAR EMPRÉSTIMO\n§7Pagar tudo de uma vez")
             .button("§b§l📊 DETALHES COMPLETOS\n§7Ver informações detalhadas");
 
@@ -493,7 +493,7 @@ export class BankSystem {
         const currentInvestment = this.investmentSystem.get(player.name);
         
         const form = new ActionFormData()
-            .title("§a§l CENTRO DE INVESTIMENTOS")
+            .title("§7 CENTRO DE INVESTIMENTOS")
             .body(`§f§lFaça seu dinheiro render!\n\n§7Saldo bancário: ${this.core.formatMoney(bankBalance)}\n${currentInvestment ? `§7Investimento ativo: ${this.core.formatMoney(currentInvestment.amount)}` : '§7Nenhum investimento ativo'}\n\n§fOpções de investimento:`)
             .button("§2§l🟢 POUPANÇA SEGURA\n§7Rendimento: 2% ao mês")
             .button("§e§l🟡 INVESTIMENTO MODERADO\n§7Rendimento: 5% ao mês")
@@ -527,7 +527,7 @@ export class BankSystem {
         }
 
         const form = new ModalFormData()
-            .title(`§a§l ${investmentType.name.toUpperCase()}`)
+            .title(`§7 ${investmentType.name.toUpperCase()}`)
             .textField(`§f§lRendimento: ${(investmentType.rate * 100).toFixed(1)}% ao mês\n§f§lRisco: ${investmentType.risk > 0 ? 'Alto' : 'Baixo'}\n§f§lMínimo: ${this.core.formatMoney(investmentType.minAmount)}\n\n§7Digite o valor para investir:`, investmentType.minAmount.toString(), "");
 
         form.show(player).then((response) => {
@@ -657,7 +657,7 @@ export class BankSystem {
             .body(`§f§lInformações da conta:\n\n§7Nome: §f${player.name}\n§7Tipo: §f${account.accountType}\n§7Score: §f${account.creditScore}/100\n§7Criada em: §f${new Date(account.createdDate).toLocaleDateString()}\n\n§fOpções:`)
             .button("§e§l⬆️ UPGRADE DE CONTA\n§7Melhorar tipo de conta")
             .button("§b§l📊 RELATÓRIO COMPLETO\n§7Ver estatísticas detalhadas")
-            .button("§d§l🎯 MELHORAR SCORE\n§7Dicas para aumentar crédito");
+            .button("§7 MELHORAR SCORE\n§7Dicas para aumentar crédito");
 
         form.show(player).then((response) => {
             if (response.canceled) return;

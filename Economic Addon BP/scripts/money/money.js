@@ -66,7 +66,7 @@ export class MoneySystem {
             .button("§e§l🪙 CONVERTER ITENS EM SALDO\n§7Transformar itens em dinheiro digital")
             .button("§b§l📊 VER EXTRATO\n§7Histórico de transações")
             .button("§d§l💸 TRANSFERIR DINHEIRO\n§7Enviar para outro jogador")
-            .button("§a§l TABELA DE VALORES\n§7Ver valores das moedas e notas");
+            .button("§7 TABELA DE VALORES\n§7Ver valores das moedas e notas");
 
         form.show(player).then((response) => {
             if (response.canceled) return;

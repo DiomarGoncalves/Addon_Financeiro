@@ -164,7 +164,7 @@ export class ExchangeSystem {
             .button("§2§l VENDER MINERAIS\n§7Trocar minerais por dinheiro")
             .button("§e§l🔥 VENDER ITENS DO NETHER\n§7Materiais do Nether")
             .button("§d§l🌌 VENDER ITENS DO END\n§7Materiais do End")
-            .button("§a§l🌾 VENDER PRODUTOS AGRÍCOLAS\n§7Itens de farming")
+            .button("§7🌾 VENDER PRODUTOS AGRÍCOLAS\n§7Itens de farming")
             .button("§c§l💀 VENDER DROPS DE MOBS\n§7Itens de criaturas")
             .button("§b§l VER COTAÇÕES\n§7Preços atuais")
             .button("§f§l📊 HISTÓRICO DE TROCAS\n§7Suas vendas anteriores");
