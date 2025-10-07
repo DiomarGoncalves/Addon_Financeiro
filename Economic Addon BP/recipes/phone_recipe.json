@@ -4,7 +4,9 @@
     "description": {
       "identifier": "economic:phone_recipe"
     },
-    "tags": ["crafting_table"],
+    "tags": [
+      "crafting_table"
+    ],
     "pattern": [
       "GGG",
       "GRG",

@@ -1,7 +1,7 @@
 {
-	"num_mip_levels": 4,
-	"padding": 8,
-	"resource_pack_name": "Economic Addon",
-	"texture_name": "atlas.terrain",
-	"texture_data": {}
+  "num_mip_levels": 4,
+  "padding": 8,
+  "resource_pack_name": "Economic Addon",
+  "texture_name": "atlas.terrain",
+  "texture_data": {}
 }

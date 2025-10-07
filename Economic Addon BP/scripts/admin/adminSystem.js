@@ -47,16 +47,14 @@ export class AdminSystem {
 
   openAdminInterface(player) {
     const form = new ActionFormData()
-      .title("PAINEL DE ADMINISTRACAO")
-      .body(
-        "Bem-vindo ao painel de administracao do sistema economico.\n\nEscolha uma opcao:"
-      )
-      .button("GERENCIAR JOGADORES\nDar/remover dinheiro")
-      .button("ESTATISTICAS\nInformacoes do sistema")
-      .button("RESETAR DADOS\nLimpar todos os dados")
-      .button("CRIAR NPCS\nSpawnar NPCs do sistema")
-      .button("CONFIGURACOES\nOpcoes avancadas")
-      .button("BACKUP\nSalvar/carregar dados");
+      .title("§7painel de administracao")
+      .body("§7bem-vindo ao painel de administracao do sistema economico.\n\nescolha uma opcao:")
+      .button("§7gerenciar jogadores\ndar/remover dinheiro")
+      .button("§7estatisticas\ninformacoes do sistema")
+      .button("§7resetar dados\nlimpar todos os dados")
+      .button("§7criar npcs\nspawnar npcs do sistema")
+      .button("§7configuracoes\nopcoes avancadas")
+      .button("§7backup\nsalvar/carregar dados");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -86,13 +84,13 @@ export class AdminSystem {
 
   openPlayerManagement(player) {
     const form = new ActionFormData()
-      .title("GERENCIAR JOGADORES")
-      .body("Gerencie o dinheiro dos jogadores:")
-      .button("DAR DINHEIRO\nAdicionar dinheiro a um jogador")
-      .button("REMOVER DINHEIRO\nRemover dinheiro de um jogador")
-      .button("DEFINIR SALDO\nDefinir saldo especifico")
-      .button("VER SALDO\nVerificar saldo de jogador")
-      .button("VOLTAR\nMenu principal");
+      .title("§7gerenciar jogadores")
+      .body("§7gerencie o dinheiro dos jogadores:")
+      .button("§7dar dinheiro\nadicionar dinheiro a um jogador")
+      .button("§7remover dinheiro\nremover dinheiro de um jogador")
+      .button("§7definir saldo\ndefinir saldo especifico")
+      .button("§7ver saldo\nverificar saldo de jogador")
+      .button("§7voltar\nmenu principal");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -119,10 +117,10 @@ export class AdminSystem {
 
   showGiveMoneyForm(player) {
     const form = new ModalFormData()
-      .title("DAR DINHEIRO")
-      .textField("Nome do jogador:", "Steve", "")
-      .textField("Valor para dar:", "1000", "")
-      .textField("Motivo (opcional):", "Bonus administrativo", "");
+      .title("§7dar dinheiro")
+      .textField("§7nome do jogador:", "§7steve", "")
+      .textField("§7valor para dar:", "§71000", "")
+      .textField("§7motivo (opcional):", "§7bonus administrativo", "");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -162,10 +160,10 @@ export class AdminSystem {
 
   showTakeMoneyForm(player) {
     const form = new ModalFormData()
-      .title("REMOVER DINHEIRO")
-      .textField("Nome do jogador:", "Steve", "")
-      .textField("Valor para remover:", "1000", "")
-      .textField("Motivo (opcional):", "Correcao administrativa", "");
+      .title("§7remover dinheiro")
+      .textField("§7nome do jogador:", "§7steve", "")
+      .textField("§7valor para remover:", "§71000", "")
+      .textField("§7motivo (opcional):", "§7correcao administrativa", "");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -209,9 +207,9 @@ export class AdminSystem {
 
   showSetBalanceForm(player) {
     const form = new ModalFormData()
-      .title("DEFINIR SALDO")
-      .textField("Nome do jogador:", "Steve", "")
-      .textField("Novo saldo:", "5000", "");
+      .title("§7definir saldo")
+      .textField("§7nome do jogador:", "§7steve", "")
+      .textField("§7novo saldo:", "§75000", "");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -250,8 +248,8 @@ export class AdminSystem {
 
   showCheckBalanceForm(player) {
     const form = new ModalFormData()
-      .title("VERIFICAR SALDO")
-      .textField("Nome do jogador:", "Steve", "");
+      .title("§7verificar saldo")
+      .textField("§7nome do jogador:", "§7steve", "");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -309,24 +307,20 @@ Versao: v1.0.0`;
 
   showResetOptions(player) {
     const form = new ActionFormData()
-      .title("RESETAR DADOS")
-      .body(
-        "ATENCAO: Estas opcoes sao irreversiveis!\n\nEscolha o que resetar:"
-      )
-      .button("RESETAR TUDO\nTodos os dados economicos")
-      .button("RESETAR JOGADORES\nApenas dados dos jogadores")
-      .button("RESETAR LOJAS\nApenas dados das lojas")
-      .button("RESETAR BANCO\nApenas dados bancarios")
-      .button("CANCELAR\nVoltar sem resetar");
+      .title("§7resetar dados")
+      .body("§7atencao: estas opcoes sao irreversiveis!\n\nescolha o que resetar:")
+      .button("§7resetar tudo\ntodos os dados economicos")
+      .button("§7resetar jogadores\napenas dados dos jogadores")
+      .button("§7resetar lojas\napenas dados das lojas")
+      .button("§7resetar banco\napenas dados bancarios")
+      .button("§7cancelar\nvoltar sem resetar");
 
     form.show(player).then((response) => {
       if (response.canceled || response.selection === 4) return;
 
       const confirmForm = new MessageFormData()
-        .title("CONFIRMAR RESET")
-        .body(
-          "TEM CERTEZA?\n\nEsta acao nao pode ser desfeita!\nTodos os dados serao perdidos permanentemente!"
-        )
+        .title("§7confirmar reset")
+        .body("§7tem certeza?\n\nesta acao nao pode ser desfeita!\ntodos os dados serao perdidos permanentemente!")
         .button1("SIM, RESETAR")
         .button2("CANCELAR");
 
@@ -409,15 +403,15 @@ resetBankData(player) {
 
   openNPCCreation(player) {
     const form = new ActionFormData()
-      .title("CRIAR NPCS")
-      .body("Crie NPCs do sistema economico na sua posicao:")
-      .button("NPC BANCO\nServicos bancarios")
-      .button("NPC LOJA GERAL")
-      .button("NPC LOJA DE EQUIPAMENTOS")
-      .button("NPC LOJA DE MATERIAIS RAROS")
-      .button("NPC CAMBIO\nTroca de itens")
-      .button("NPC DINHEIRO\nConversao de dinheiro")
-      .button("VOLTAR\nMenu principal");
+      .title("§7criar npcs")
+      .body("§7crie npcs do sistema economico na sua posicao:")
+      .button("§7npc banco\nservicos bancarios")
+      .button("§7npc loja geral")
+      .button("§7npc loja de equipamentos")
+      .button("§7npc loja de materiais raros")
+      .button("§7npc cambio\ntroca de itens")
+      .button("§7npc dinheiro\nconversao de dinheiro")
+      .button("§7voltar\nmenu principal");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -478,12 +472,12 @@ resetBankData(player) {
 
   openAdvancedSettings(player) {
     const form = new ActionFormData()
-      .title("CONFIGURACOES AVANCADAS")
-      .body("Configuracoes avancadas do sistema:")
-      .button("SALVAR DADOS\nForcar salvamento")
-      .button("RECARREGAR DADOS\nRecarregar do arquivo")
-      .button("VERIFICAR INTEGRIDADE\nVerificar dados")
-      .button("VOLTAR\nMenu principal");
+      .title("§7configuracoes avancadas")
+      .body("§7configuracoes avancadas do sistema:")
+      .button("§7salvar dados\nforcar salvamento")
+      .button("§7recarregar dados\nrecarregar do arquivo")
+      .button("§7verificar integridade\nverificar dados")
+      .button("§7voltar\nmenu principal");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -560,11 +554,11 @@ resetBankData(player) {
 
   openBackupOptions(player) {
     const form = new ActionFormData()
-      .title("BACKUP DE DADOS")
-      .body("Opcoes de backup do sistema:")
-      .button("CRIAR BACKUP\nSalvar estado atual")
-      .button("RESTAURAR BACKUP\nCarregar backup anterior")
-      .button("VOLTAR\nMenu principal");
+      .title("§7backup de dados")
+      .body("§7opcoes de backup do sistema:")
+      .button("§7criar backup\nsalvar estado atual")
+      .button("§7restaurar backup\ncarregar backup anterior")
+      .button("§7voltar\nmenu principal");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -614,7 +608,7 @@ resetBankData(player) {
       const backup = JSON.parse(backupData);
 
       const confirmForm = new MessageFormData()
-        .title("RESTAURAR BACKUP")
+        .title("§7restaurar backup")
         .body(
           `Restaurar backup de:\n${new Date(
             backup.timestamp

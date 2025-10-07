@@ -1,75 +1,75 @@
 {
-	"format_version": 2,
-	"metadata": {
-		"authors": [
-			"Diomar Gonçalves"
-		],
-		"generated_with": {
-			"bridge": [
-				"2.7.50"
-			],
-			"dash": [
-				"0.11.7"
-			]
-		}
-	},
-	"header": {
-		"name": "Economic Addon",
-		"description": "Addon de Economia global",
-		"min_engine_version": [
-			1,
-			21,
-			90
-		],
-		"uuid": "994b22c4-3edd-4c12-835f-c2dc313e8823",
-		"version": [
-			1,
-			0,
-			0
-		]
-	},
-	"modules": [
-		{
-			"type": "data",
-			"uuid": "592acda7-3af5-48f3-a4ec-f93fa0e9c3fc",
-			"version": [
-				1,
-				0,
-				0
-			]
-		},
-		{
-			"type": "script",
-			"language": "javascript",
-			"uuid": "2a567066-82d7-4021-b1aa-ab5ea26807f1",
-			"entry": "scripts/main.js",
-			"version": [
-				1,
-				0,
-				0
-			]
-		}
-	],
-	"dependencies": [
-		{
-			"uuid": "fb8ae269-0ad7-40b4-a58d-b062d5721f9b",
-			"version": [
-				1,
-				0,
-				0
-			]
-		},
-		{
-			"module_name": "@minecraft/server",
-			"version": "1.14.0"
-		},
-		{
-			"module_name": "@minecraft/server-gametest",
-			"version": "1.0.0-beta"
-		},
-		{
-			"module_name": "@minecraft/server-ui",
-			"version": "1.2.0"
-		}
-	]
+  "format_version": 2,
+  "metadata": {
+    "authors": [
+      "Diomar Gonçalves"
+    ],
+    "generated_with": {
+      "bridge": [
+        "2.7.50"
+      ],
+      "dash": [
+        "0.11.7"
+      ]
+    }
+  },
+  "header": {
+    "name": "§7economic addon",
+    "description": "§7addon de economia global",
+    "min_engine_version": [
+      1,
+      21,
+      90
+    ],
+    "uuid": "994b22c4-3edd-4c12-835f-c2dc313e8823",
+    "version": [
+      1,
+      0,
+      0
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "592acda7-3af5-48f3-a4ec-f93fa0e9c3fc",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "2a567066-82d7-4021-b1aa-ab5ea26807f1",
+      "entry": "scripts/main.js",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "fb8ae269-0ad7-40b4-a58d-b062d5721f9b",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "module_name": "@minecraft/server",
+      "version": "1.14.0"
+    },
+    {
+      "module_name": "@minecraft/server-gametest",
+      "version": "1.0.0-beta"
+    },
+    {
+      "module_name": "@minecraft/server-ui",
+      "version": "1.2.0"
+    }
+  ]
 }

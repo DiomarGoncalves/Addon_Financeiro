@@ -467,8 +467,8 @@ export class ShopSystem {
       );
     });
 
-    form.button("§f HISTÓRICO DE COMPRAS\n§8Ver suas compras anteriores");
-    form.button("§f OFERTAS ESPECIAIS\n§8Promoções e descontos");
+    form.button("§7histórico de compras\nver suas compras anteriores");
+    form.button("§7ofertas especiais\npromoções e descontos");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -516,7 +516,7 @@ export class ShopSystem {
       );
     });
 
-    form.button("§c VOLTAR");
+    form.button("§7voltar");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -551,7 +551,7 @@ export class ShopSystem {
     }
 
     const form = new ModalFormData()
-      .title("§6§l CONFIRMAR COMPRA")
+      .title("§7confirmar compra")
       .textField(
         `§f§lItem: §e${itemName}\n§f§lPreço unitário: ${this.core.formatMoney(
           item.price
@@ -563,7 +563,7 @@ export class ShopSystem {
         "1",
         ""
       )
-      .toggle("§f§lCompra em quantidade", false);
+      .toggle("§7compra em quantidade", false);
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -718,7 +718,7 @@ export class ShopSystem {
     }
 
     const form = new ActionFormData()
-      .title("§b OFERTAS ESPECIAIS")
+      .title("§7ofertas especiais")
       .body(
         `§f§lPromoções exclusivas da ${shop.name}!\n\n§7Aproveite enquanto durar:`
       );
@@ -736,7 +736,7 @@ export class ShopSystem {
       );
     });
 
-    form.button("§c VOLTAR");
+    form.button("§7voltar");
 
     form.show(player).then((response) => {
       if (response.canceled) return;
@@ -759,7 +759,7 @@ export class ShopSystem {
     );
 
     const form = new MessageFormData()
-      .title("§b OFERTA ESPECIAL")
+      .title("§7oferta especial")
       .body(
         `§f§l PROMOÇÃO ESPECIAL!\n\n§7Item: §f${itemName}\n§7Quantidade: §a${
           offer.count

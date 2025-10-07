@@ -25,12 +25,12 @@ export class BankSystem {
         const bankBalance = this.core.getBankBalance(player.name);
 
         const form = new ActionFormData()
-            .title("§8🏦 BANCO")
+            .title("§7banco")
             .body(`§8Seu banco:\n\n§8 Carteira: ${this.core.formatMoney(balance)}\n§8🏦 Banco: ${this.core.formatMoney(bankBalance)}\n\n§8Escolha uma opção:`)
-            .button("§8Depositar dinheiro")
-            .button("§8Sacar dinheiro")
-            .button("§8Transferir para outro jogador")
-            .button("§8Ver extrato bancário");
+            .button("§7depositar dinheiro")
+            .button("§7sacar dinheiro")
+            .button("§7transferir para outro jogador")
+            .button("§7ver extrato bancário");
 
         form.show(player).then((response) => {
             if (response.canceled) return;

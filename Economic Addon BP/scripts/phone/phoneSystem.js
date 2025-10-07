@@ -33,15 +33,15 @@ export class PhoneSystem {
         const totalWealth = balance + bankBalance;
         
         const form = new ActionFormData()
-            .title("CELULAR ECONOMICO")
+            .title("§7celular economico")
             .body(`Bem-vindo ao seu celular economico!\n\nCarteira: ${this.core.formatMoney(balance)}\nBanco: ${this.core.formatMoney(bankBalance)}\nTotal: ${this.core.formatMoney(totalWealth)}\n\nEscolha um aplicativo:`)
-            .button("CARTEIRA\nGerenciar seu dinheiro")
-            .button("BANCO\nServicos bancarios")
-            .button("LOJA\nComprar itens")
-            .button("CAMBIO\nTrocar itens por dinheiro")
-            .button("TRANSFERENCIA\nEnviar dinheiro")
-            .button("EXTRATO\nVer transacoes")
-            .button("CONFIGURACOES\nOpcoes do sistema");
+            .button("§7carteira\ngerenciar seu dinheiro")
+            .button("§7banco\nservicos bancarios")
+            .button("§7loja\ncomprar itens")
+            .button("§7cambio\ntrocar itens por dinheiro")
+            .button("§7transferencia\nenviar dinheiro")
+            .button("§7extrato\nver transacoes")
+            .button("§7configuracoes\nopcoes do sistema");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -78,11 +78,11 @@ export class PhoneSystem {
         const stats = this.core.getPlayerStats(player.name);
         
         const form = new ActionFormData()
-            .title("CARTEIRA DIGITAL")
+            .title("§7carteira digital")
             .body(`Informacoes da sua carteira:\n\nSaldo atual: ${this.core.formatMoney(balance)}\nBanco: ${this.core.formatMoney(bankBalance)}\nTotal ganho: ${this.core.formatMoney(stats.totalEarned)}\nTotal gasto: ${this.core.formatMoney(stats.totalSpent)}\n\nOpcoes:`)
-            .button("CONVERTER PARA FISICO\nTransformar em itens")
-            .button("CONVERTER DE FISICO\nItens para digital")
-            .button("VOLTAR\nMenu principal");
+            .button("§7converter para fisico\ntransformar em itens")
+            .button("§7converter de fisico\nitens para digital")
+            .button("§7voltar\nmenu principal");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -105,10 +105,10 @@ export class PhoneSystem {
         const balance = this.core.getWalletBalance(player.name);
         
         const form = new ModalFormData()
-            .title("TRANSFERENCIA")
+            .title("§7transferencia")
             .textField(`Seu saldo: ${this.core.formatMoney(balance)}\n\nNome do destinatario:`, "Steve", "")
-            .textField("Valor da transferencia:", "100", "")
-            .textField("Mensagem (opcional):", "Transferencia", "");
+            .textField("§7valor da transferencia:", "§7100", "")
+            .textField("§7mensagem (opcional):", "§7transferencia", "");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -179,11 +179,11 @@ export class PhoneSystem {
 
     openSettingsApp(player) {
         const form = new ActionFormData()
-            .title("CONFIGURACOES")
-            .body("Configuracoes do sistema economico:")
-            .button("AJUDA\nComo usar o sistema")
-            .button("STATUS\nInformacoes do sistema")
-            .button("VOLTAR\nMenu principal");
+            .title("§7configuracoes")
+            .body("§7configuracoes do sistema economico:")
+            .button("§7ajuda\ncomo usar o sistema")
+            .button("§7status\ninformacoes do sistema")
+            .button("§7voltar\nmenu principal");
 
         form.show(player).then((response) => {
             if (response.canceled) return;

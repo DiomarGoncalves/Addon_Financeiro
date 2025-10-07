@@ -1,14 +1,14 @@
-item.economic:coin_1=§e $1 Coin
-item.economic:coin_5=§7 $5 Coin  
-item.economic:coin_10=§6 $10 Coin
-item.economic:note_20=§a💵 $20 Bill
-item.economic:note_50=§b💵 $50 Bill
-item.economic:note_100=§d💵 $100 Bill
-item.economic:note_500=§c💵 $500 Bill
-item.economic:note_1000=§f💵 $1000 Bill
-item.economic:phone=Economic Phone
-item.economic:admin_tablet=Admin Tablet
+item.economic:coin_1=§7$1 coin
+item.economic:coin_5=§7$5 coin
+item.economic:coin_10=§7$10 coin
+item.economic:note_20=§7$20 bill
+item.economic:note_50=§7$50 bill
+item.economic:note_100=§7$100 bill
+item.economic:note_500=§7$500 bill
+item.economic:note_1000=§7$1000 bill
+item.economic:phone=§7economic phone
+item.economic:admin_tablet=§7admin tablet
 
-economy.money.converted=Money converted successfully!
-economy.money.insufficient=Insufficient funds!
-economy.money.invalid_amount=Invalid amount!
+economy.money.converted=§7money converted successfully!
+economy.money.insufficient=§7insufficient funds!
+economy.money.invalid_amount=§7invalid amount!

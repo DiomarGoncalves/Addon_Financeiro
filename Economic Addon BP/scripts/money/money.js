@@ -60,13 +60,13 @@ export class MoneySystem {
         const bankBalance = this.core.getBankBalance(player.name);
         
         const form = new ActionFormData()
-            .title("§6§l GERENCIADOR DE DINHEIRO")
+            .title("§7gerenciador de dinheiro")
             .body(`§f§lSeus recursos financeiros:\n\n§7💵 Carteira: ${this.core.formatMoney(balance)}\n§7🏦 Banco: ${this.core.formatMoney(bankBalance)}\n§7 Total: ${this.core.formatMoney(balance + bankBalance)}\n\n§fEscolha uma opção:`)
-            .button("§2§l💵 CONVERTER PARA DINHEIRO FÍSICO\n§7Transformar saldo em itens")
-            .button("§e§l🪙 CONVERTER ITENS EM SALDO\n§7Transformar itens em dinheiro digital")
-            .button("§b§l📊 VER EXTRATO\n§7Histórico de transações")
-            .button("§d§l💸 TRANSFERIR DINHEIRO\n§7Enviar para outro jogador")
-            .button("§7 TABELA DE VALORES\n§7Ver valores das moedas e notas");
+            .button("§7converter para dinheiro físico\ntransformar saldo em itens")
+            .button("§7🪙 converter itens em saldo\ntransformar itens em dinheiro digital")
+            .button("§7ver extrato\nhistórico de transações")
+            .button("§7transferir dinheiro\nenviar para outro jogador")
+            .button("§7tabela de valores\nver valores das moedas e notas");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -100,7 +100,7 @@ export class MoneySystem {
         }
 
         const form = new ModalFormData()
-            .title("§2§l💵 CONVERTER PARA FÍSICO")
+            .title("§7converter para físico")
             .textField(`§f§lSaldo disponível: ${this.core.formatMoney(balance)}\n\n§7Digite o valor para converter em dinheiro físico:`, balance.toString(), "");
 
         form.show(player).then((response) => {
@@ -216,10 +216,10 @@ export class MoneySystem {
         }
 
         const form = new ActionFormData()
-            .title("§e§l🪙 CONVERTER PARA DIGITAL")
+            .title("§7🪙 converter para digital")
             .body(`§f§lDinheiro físico encontrado:\n\n${this.formatMoneyItemsList(moneyItems)}\n§f§lValor total: ${this.core.formatMoney(totalValue)}\n\n§7Converter tudo para saldo digital?`)
-            .button("§a CONVERTER TUDO")
-            .button("§c CANCELAR");
+            .button("§7converter tudo")
+            .button("§7cancelar");
 
         form.show(player).then((response) => {
             if (response.canceled || response.selection === 1) return;
@@ -381,8 +381,8 @@ export class MoneySystem {
         const balance = this.core.getWalletBalance(player.name);
         
         const form = new ModalFormData()
-            .title("§d§l💸 TRANSFERIR DINHEIRO")
-            .textField("§f§lNome do destinatário:", "Steve", "")
+            .title("§7transferir dinheiro")
+            .textField("§7nome do destinatário:", "§7steve", "")
             .textField(`§f§lSeu saldo: ${this.core.formatMoney(balance)}\n\n§7Valor da transferência:`, "100", "");
 
         form.show(player).then((response) => {

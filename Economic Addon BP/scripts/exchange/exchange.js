@@ -159,15 +159,15 @@ export class ExchangeSystem {
         const todayExchanges = this.getTodayExchangeCount(player.name);
         
         const form = new ActionFormData()
-            .title("§6§l💱 CASA DE CÂMBIO")
+            .title("§7casa de câmbio")
             .body(`§f§lBem-vindo à Casa de Câmbio!\n\n§7 Seu dinheiro: ${this.core.formatMoney(balance)}\n§7📊 Trocas hoje: §f${todayExchanges}\n\n§fServiços disponíveis:`)
-            .button("§2§l VENDER MINERAIS\n§7Trocar minerais por dinheiro")
-            .button("§e§l🔥 VENDER ITENS DO NETHER\n§7Materiais do Nether")
-            .button("§d§l🌌 VENDER ITENS DO END\n§7Materiais do End")
-            .button("§7🌾 VENDER PRODUTOS AGRÍCOLAS\n§7Itens de farming")
-            .button("§c§l💀 VENDER DROPS DE MOBS\n§7Itens de criaturas")
-            .button("§b§l VER COTAÇÕES\n§7Preços atuais")
-            .button("§f§l📊 HISTÓRICO DE TROCAS\n§7Suas vendas anteriores");
+            .button("§7vender minerais\ntrocar minerais por dinheiro")
+            .button("§7vender itens do nether\nmateriais do nether")
+            .button("§7vender itens do end\nmateriais do end")
+            .button("§7vender produtos agrícolas\nitens de farming")
+            .button("§7vender drops de mobs\nitens de criaturas")
+            .button("§7ver cotações\npreços atuais")
+            .button("§7histórico de trocas\nsuas vendas anteriores");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
@@ -284,7 +284,7 @@ export class ExchangeSystem {
             form.button(`§f${itemName}\n§7${item.count}x | ${this.core.formatMoney(currentPrice)} cada | Total: ${this.core.formatMoney(totalValue)}`);
         });
 
-        form.button("§c VOLTAR");
+        form.button("§7voltar");
 
         form.show(player).then((response) => {
             if (response.canceled) return;
